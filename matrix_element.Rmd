@@ -1,0 +1,341 @@
+# Matrix element
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+In this chapter we report the test done to compute the matrix element
+$$\langle \phi_1|\phi_1\phi_0^3|3\phi_0 \rangle$$
+
+## time ordering 1
+
+The matrix element $\langle \phi_1|\phi_1\phi_0^3|3\phi_0 \rangle$ can be extracted from the correlator
+
+$$
+\langle \phi_1(t_f)\phi_1\phi_0^3(t)  \phi_0(0)^3 \rangle \to
+\langle 0|\phi_1|\phi_1 \rangle
+\langle \phi_1| \phi_1 \phi_0^3 |3 \phi_0\rangle 
+\langle 3\phi_0|\phi_0^3|0 \rangle  e^{{-E_{\phi_1}(t_f)}+{(E_{\phi_1}-E_{3\phi_0})t} }
+\\+
+\langle \phi_0|\phi_1|\phi_0\phi_1 \rangle
+\langle \phi_0\phi_1| \phi_1 \phi_0^3 |2 \phi_0\rangle 
+\langle 2\phi_0|\phi_0^3|\phi_0 \rangle   e^{\color{blue}{-E_{\phi_1\phi_0}(t_f)-E_{\phi_0}(T-t_f)}+\color{red}{(E_{\phi_1\phi_0}-E_{2\phi_0})t} }
+\\+
+\langle 2\phi_0|\phi_1|2\phi_0\phi_1 \rangle
+\langle 2\phi_0\phi_1| \phi_1 \phi_0^3 | \phi_0\rangle 
+\langle \phi_0|\phi_0^3|2\phi_0 \rangle 
+e^{\color{blue}{-E_{\phi_12\phi_0}(t_f)-E_{2\phi_0}(T-t_f)}+\color{red}{(E_{\phi_12\phi_0}-E_{\phi_0})t} }\,.
+$$
+\textcolor{blue}{suppressed}  \textcolor{red}{enanched}
+<span style="color: blue;">suppressed</span>, <span style="color: red;">enanched</span>.
+
+We can remove the unwanted matrix elements considering the ratio
+$$
+\frac{\langle \phi_1(t_f)\phi_1\phi_0^3(t)  \phi_0(0)^3 \rangle }
+{\sqrt{\langle \phi_1(t_f)\phi_1(t)\rangle \langle \phi_0^3(t)  \phi_0(0)^3 \rangle}}
+=\langle \phi_1| \phi_1 \phi_0^3 |3 \phi_0\rangle  e^{-\frac{E_{\phi_1}}{2}(t_f-t)-\frac{E_{3\phi_0}}{2}t }
+$$
+
+### T48
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) ,c(96,30) )
+
+
+for (TL in TLs){
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("me_T_2",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t10",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t12",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t16",all_obs,mt,gg,"yes")
+
+fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 24), autorange = F  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+
+cat("\n\n")
+print(htmltools::tagList(fig))
+cat("\n\n")
+}
+
+```
+
+### T32
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(32,30)  )
+gg<-ggplot()
+
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("me_T_2",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t10",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t12",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t16",all_obs,mt,gg,"yes")
+
+}
+
+ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 24), autorange = F  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+```
+
+```{r, echo=FALSE, eval=FALSE,results='asis', fig.width = 12}
+Ts<-32
+Ls<-c(30)
+TLs=list(c(32,30), c(48,30))
+
+for (TL in TLs){
+  gg<-ggplot()
+
+L<-TL[2]
+T<-TL[1]
+cat('\n\n# T',T,'L',L,'\n\n')
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####", file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+string=sprintf("\\b%s\\b","me_T_2")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-paste(gsub('\\\\b','',string),"(L=",L,")")
+n<-all_obs[l,"n"]
+d<- get_block_n(mt,n)
+fit<- get_fit_n(mt,n)
+fit_range<- get_plateaux_range(mt,n)
+gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+#cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+my_print(label,fit,all_obs,l)
+
+
+string=sprintf("\\b%s\\b","me_t10")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-paste(gsub('\\\\b','',string),"(L=",L,")")
+n<-all_obs[l,"n"]
+d<- get_block_n(mt,n)
+fit<- get_fit_n(mt,n)
+fit_range<- get_plateaux_range(mt,n)
+gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+#cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+my_print(label,fit,all_obs,l)
+
+
+string=sprintf("\\b%s\\b","me_t12")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-paste(gsub('\\\\b','',string),"(L=",L,")")
+n<-all_obs[l,"n"]
+d<- get_block_n(mt,n)
+fit<- get_fit_n(mt,n)
+fit_range<- get_plateaux_range(mt,n)
+gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+#cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+my_print(label,fit,all_obs,l)
+
+
+string=sprintf("\\b%s\\b","me_t16")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-paste(gsub('\\\\b','',string),"(L=",L,")")
+n<-all_obs[l,"n"]
+d<- get_block_n(mt,n)
+fit<- get_fit_n(mt,n)
+fit_range<- get_plateaux_range(mt,n)
+gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+#cat(label,"=", mean_print(fit[1,1],fit[1,2]),'\n\n')
+my_print(label,fit,all_obs,l)
+
+
+
+
+#gg<- gg+coord_cartesian(xlim=c(0,8))
+fig<-ggplotly(gg)%>%layout(title="fit" ,xaxis = list(title = TeX("t"),showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = TeX("c(t)"),showexponent = "all", exponentformat = "e", autorange = T  )) 
+print(htmltools::tagList(fig))
+}
+```
+
+
+## time ordering 2
+
+
+
+$$
+\langle\phi_0(t_f)^3  \phi_1\phi_0^3(t) \phi_1(0) \rangle \to
+\langle 0|\phi_0|3\phi_0 \rangle
+\langle 3\phi_0| \phi_1 \phi_0^3 | \phi_1\rangle 
+\langle \phi_1|\phi_1|0 \rangle  e^{-E_{3\phi_0}(t_f)+(E_{3\phi_0}-E_{\phi_1})t }
+\\+
+\langle \phi_0|\phi_0^3|2\phi_0 \rangle
+\langle 2\phi_0| \phi_1 \phi_0^3 |2 \phi_0\phi_1\rangle 
+\langle \phi_1|\phi_1|\phi_0 \rangle  e^{\color{red}{-E_{2\phi_0}(t_f)}-\color{blue}{E_{\phi_0}(T-t_f)}+\color{blue}{(E_{2\phi_0}-E_{\phi_0\phi_1})t} }
+\\+
+\langle 2\phi_0|\phi_0^3|\phi_0 \rangle
+\langle \phi_0| \phi_1 \phi_0^3 | 2\phi_0\phi_1\rangle 
+\langle 2\phi_0\phi_1|\phi_1|2\phi_0 \rangle  e^{\color{red}{-E_{\phi_0}(t_f)}-\color{blue}{E_{2\phi_0}(T-t_f)}+\color{blue}{(E_{\phi_0}-E_{2\phi_0\phi_1})t} }\,.
+$$
+\textcolor{blue}{suppressed}  \textcolor{red}{enanched}
+<span style="color: blue;">suppressed</span>, <span style="color: red;">enhanced</span>. Since $T>t_f$ the overall exponent in $T$ and $t_f$ gives an overall suppressing factor for the second and third term.
+If the operator $\phi^2$ has a $v.e.v$ then $\langle \phi_0|\phi^3|0\rangle \neq0$ and so there are these two more contribution
+$$
+\langle 0|\phi_0^3|\phi_0 \rangle
+\langle \phi_0| \phi_1 \phi_0^3 |\phi_1\rangle 
+\langle \phi_1|\phi_1|\rangle  
+e^{-E_{\phi_0}t_f+E_{\phi_0}t-E_{\phi_1}t}
+\\
++\langle \phi_0|\phi_0^3| 0\rangle
+\langle 0| \phi_1 \phi_0^3 |\phi_1\rangle 
+\langle \phi_1|\phi_1|\phi_0\rangle  
+e^{-E_{\phi_0}T+E_{\phi_0}t_f -E_{\phi_1\phi_0}t}
+$$
+
+Below a plot of the different contribution assuming all the amplitude equal to 1
+
+```{r, echo=TRUE,results='asis'}
+e1<-c()
+e2<-c()
+e3<-c()
+e4<-c()
+e5<-c()
+
+
+T<-48
+L<-30
+tf<-16
+#read the energies
+dir<-"../out"
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+E3_0=get_energy("E3_0",all_obs,mt)[1]
+E1_1=get_energy("E1_1",all_obs,mt)[1]
+E2_0=get_energy("E2_0",all_obs,mt)[1]
+E1_0=get_energy("E1_0",all_obs,mt)[1]
+E2_01=get_energy("E2_01",all_obs,mt)[1]
+cat("$E_{3\\phi_0}$=",E3_0,"\n\n" )
+cat("$E_{1\\phi_1}$=",E1_1,"\n\n" )
+cat("$E_{2\\phi_0}$=",E2_0,"\n\n" )
+cat("$E_{1\\phi_0}$=",E1_0,"\n\n" )
+t<-c(0:480)/100
+e1<-c(e1, exp(-E3_0*tf+(E3_0-E1_1)*t ) )
+e2<-c(e2, exp(-E2_0*tf-E1_0*(T-tf)+ (E2_0-(E1_0+E1_1) )*t ) )
+e3<-c(e3, exp(-E1_0*tf-E2_0*(T-tf)+ (E1_0-(E2_0+E1_1))*t ) )
+e4<-c(e4, exp(-E1_0*tf + E1_0*t- E1_0*t ) )
+e5<-c(e5, exp(-E1_0*T + (E1_0)*tf- (E1_0+E1_1)*t   ) )
+
+gg<-ggplot()+geom_line(aes(x=t,y=log(e1), color="1"))+theme_bw()
+gg<-   gg   +geom_line(aes(x=t,y=log(e2), color="2"))
+gg<-   gg   +geom_line(aes(x=t,y=log(e3), color="3"))
+gg<-   gg   +geom_line(aes(x=t,y=log(e4), color="4"))
+gg<-   gg   +geom_line(aes(x=t,y=log(e5), color="5"))
+gg
+
+```
+
+
+### Fittint the contribution 1,4,5
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30), c(96,30) )
+
+for (TL in TLs){
+gg<-ggplot()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("me_3pik_T_2",all_obs,mt,gg,"yes")
+gg<-add_plot("me_3pik_t10",all_obs,mt,gg,"yes")
+gg<-add_plot("me_3pik_t12",all_obs,mt,gg,"yes")
+gg<-add_plot("me_3pik_t16",all_obs,mt,gg,"yes")
+
+fig<-ggplotly(gg, dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+
+}
+
+```
+
+## free theory , time ordering 1
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+
+for (TL in TLs){
+gg<-ggplot()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../free/out")
+file=sprintf("%s/G2t_T%d_L%d_msq00.022500_msq10.202500_l00.000000_l10.000000_mu0.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("me_T_2",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t10",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t12",all_obs,mt,gg,"yes")
+gg<-add_plot("me_t16",all_obs,mt,gg,"yes")
+
+fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+
+}
+
+```

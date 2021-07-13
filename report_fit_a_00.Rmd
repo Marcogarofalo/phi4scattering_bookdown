@@ -1,0 +1,63 @@
+# fit $a_{00}$
+
+```{r , include=FALSE}
+library(knitr)
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+
+#knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(fig.align='center',       comment='')
+knitr::opts_chunk$set(fig.width=8, fig.height=5) 
+require(ggplot2)
+require(scales) # to access break formatting functions
+library(latex2exp)
+library(pander)
+panderOptions('knitr.auto.asis', FALSE)
+library(plotly)
+library(reticulate)
+use_python("/home/marco/Programs/Anaconda3/bin/python")
+
+# library(knitrengines) # github.com/hrbrmstr/knitrengines
+library(dplyr)
+library(Rose)
+library(ggrepel)
+``` 
+
+```{r, echo=FALSE}
+
+file=sprintf("../prova/a_00_lusher_fit_data.txt")
+df_L<- read.table(file, header=FALSE, fill=TRUE)
+names(df_L) <- c("$L$","$\\mu_L\\Delta E_{00}$","err", "$T$")
+
+#df<-cbind(df_inf,df_L)
+#df<-df[ c("$T$","$L$","$\\mu_\\infty\\Delta E_{00}$","err","$\\mu_L\\Delta E_{00}$","err")]
+kable(df_L)
+
+```
+
+$$
+  \Delta E_2=-\frac{2\pi a}{\mu L^3}\left[ 1 + c_1  \frac{a}{L} + c_2\left(\frac{a}{L}\right)^2  \right] +O(\frac{1}{L^6})
+$$
+```{r , child="../prova/a_00_lusher_fit_P.tex", eval=TRUE}
+```
+
+```{r,echo=FALSE}
+gg<- ggplot()
+
+#########
+file=sprintf("../prova/a_00_lusher_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err", "$T$","k","n"))
+file=sprintf("../prova/a_00_lusher_fit_out_L.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err"))
+
+#gg<-gg+ geom_point(data=df, mapping=aes(x=L , y=M0L) )
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=L , ymin=M0L-M0L_err, ymax=M0L+M0L_err,color="m_L") ,width=0.1)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=L , ymin=M0L-M0L_err, ymax=M0L+M0L_err),fill="red",alpha=0.2)
+
+
+
+#####
+gg<- gg  + ggplot2::coord_cartesian(xlim=c(25,38), ylim=c(0,5e-4 ))
+#gg<- gg +labs(x =TeX('L/a'), y= TeX('$\\mu\\Delta E2_{00}(L)$'))
+gg<- gg+theme_bw() 
+ggplotly(gg) %>% config(dynamicTicks = TRUE) %>%layout (yaxis= list(title=TeX("a_0") ))
+```

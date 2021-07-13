@@ -1,0 +1,419 @@
+# E2
+
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8, dev='tikz')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+
+
+the two particle operator can be defined at zero momentum
+
+$$
+O_2=\phi(0)\phi(0)
+$$ We can also construct an operator that interpolates the same state
+
+#### FT
+
+we define the discrete Fourier Tansform  in space
+
+$$
+\phi(p,t)=\frac{1}{V}\sum_x e^{i2\pi \vec{p}\cdot \vec{x}/L}\phi(x,t)
+$$
+with $\vec{p}=(n_x,n_y,n_z)$ and $n_i=0,1,...,L-1$
+since the field  $\phi(x,t)$ is real we have that 
+$$
+\phi(-p,t)=\phi^*(p,t)
+$$
+
+
+
+
+with back to back momentum. In the latter case to have an operator which
+projected on the $A1$ irrep of $O(24)$ we need to construct the
+combination
+$$
+O_2^{A1}=\frac{1}{\sqrt{3}}\left[\phi(p_x)\phi^*(p_x)+\phi(p_y)\phi^*(p_y)+\phi(p_z)\phi^*(p_z)\right]
+$$ 
+where $p_x=(2\pi /L,0,0)$ and we use the fact that
+$\phi(-p)=\phi(p)^*$.
+
+with these Operator we can construct the correlator $$
+\frac{1}{T}\sum_{t_1}\langle O_2^{A1}(t_1) O_2^{A1*}(t_1+t)\rangle = |A_{0\to2}| \left( e^{-E_2 t}+e^{-E_2 (T-t)}\right)+
+|A_{1\to1}| e^{-E_1 t}
+$$
+
+-   $E_2$ is the energy of the two particle state at rest;
+
+-   $E_1$ is the energy of the single particle with momentum
+    $|p|=2\pi/L$;
+
+-   $O_2^{A1*}=O_2^{A1}$ since it is real.
+
+#### E irrep
+
+The other irrep possible is $E$ which is two dimensional
+$$
+O_2^{E1}=\frac{1}{\sqrt{2}}\left[\phi(p_x)\phi(p_x)^*-\phi(p_y)\phi(p_y)^*\right]
+$$
+which should interpolate an exited state, the other state of this irrep is
+$$
+O_2^{E2}=\frac{1}{\sqrt{2}}\left[\phi(p_x)\phi(p_x)^*+\phi(p_y)\phi(p_y)^*-2\phi(p_z)\phi(p_z)^*\right]
+$$
+
+#### two particle with momentum operator
+
+#### p=(1,0,0)
+
+we can construct the two particle operator with momentum as
+$$
+O_{2p_x}=\phi(p_x)\phi(0)  \,,\quad p_x=(1,0,0)
+$$
+this operator is already in the irrep $A1$. The two particle correlator can be define as
+$$
+\langle O_{2p_x} O_{2p_x}^\dagger(t)\rangle =  |A_{0\to2}|^2 \left( e^{-E_{2p_x} t}+e^{-E_{2p_x} (T-t)}\right)+
+|A_{\phi(0)\to\phi(p_x)}|^2 \left(e^{-\omega_{p_x} T-m t+\omega_{p_x}t}+e^{-m T-\omega_{p_x} t+mt} \right)\,.
+$$
+We can average over all the direction to have a more precise correlator
+$$
+\frac{1}{3}\sum_{i=x,y,z} \langle O_{2p_i} O_{2p_i}^\dagger(t)\rangle
+$$
+
+#### p=(1,1,0)
+
+$$
+O_{2p_{xy}}=\phi(p_{xy})\phi(0)  \,,\quad p_{xy}=(1,1,0)
+$$
+To construct the correlator we can average over all the direction to have a more precise correlator
+$$
+\frac{1}{3}\sum_{i=xy,yz,zx} \langle O_{2p_i} O_{2p_i}^\dagger(t)\rangle
+$$
+
+#### p=(1,1,1)
+
+The operator
+$$
+O_{2p_{xyx}}=\phi(p_{xyz})\phi(0)  \,,\quad p_{xyz}=(1,1,1)\,,
+$$
+and the correlator
+$$
+ \langle O_{2p_{x,y,z}} O_{2p_{x,y,z}}^\dagger(t)\rangle
+$$
+
+## Plot
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30), c(96,30)  )
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+for (TL in TLs){
+gg<-ggplot()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E2_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt((m/2)^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )+m/2   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m/2)  +0.5*hatp2 )+m/2    )
+}
+
+gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+tmp<-get_energy("E2_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p1",all_obs,mt,gg,"yes")
+tmp<-get_energy("E2_0_p1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p11",all_obs,mt,gg,"yes")
+tmp<-get_energy("E2_0_p11",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p111",all_obs,mt,gg,"yes")
+tmp<-get_energy("E2_0_p111",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_A1",all_obs,mt,gg,"no")
+fig<-ggplotly(gg)%>%config(mathjax='cdn') %>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+
+}
+
+
+
+df <-data.frame("p2"=p2,"E1"=E1s,"E1err"=E1serr, "cont_disp"=cont_disp , "latt_disp"=latt_disp)
+#g1<- ggplot()+ geom_point(df ,mapping= aes(x=p2, y=E1)  )+
+#  geom_errorbar(df ,mapping= aes(x=p2, ymin=E1-E1err, ymax=E1+E1err),width=0.005  )+ theme_bw()+
+#  geom_line(df ,mapping= aes(x=p2, y=cont_disp,,color="cont"))+
+#  geom_line(df ,mapping= aes(x=p2, y=latt_disp,color="lattice"))
+#ggplotly(g1)%>%layout(title="dispersion relation" ,xaxis = list(title = TeX("p^2"),showexponent = "all", exponentformat = "e" ,  autorange = T  ) ,
+#                      yaxis = list(title = TeX("E_2(P)"),showexponent = "all", exponentformat = "e", autorange = T  )) 
+```
+
+### residual plot 
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) , c(96,30) )
+
+for (TL in TLs){
+  gg<-ggplot()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_res_plot("E2_0",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p1",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p11",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p111",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_A1",all_obs,mt,gg,"no")
+
+fig<-ggplotly(gg,dynamicTicks = TRUE)%>%config(mathjax='cdn') %>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" ,  autorange = T  ) ,
+                      yaxis = list(title = "res $c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+
+}
+
+
+```
+
+
+
+## Weight shift
+
+Here we compute the two particle energy with a different procedure. Starting from the correlator
+
+$$
+\langle O_{2p_x} O_{2p_x}^\dagger(t)\rangle =  |A_{0\to2}|^2 \left( e^{-E_{2p} t}+e^{-E_{2p} (T-t)}\right)+
+|A_{\phi(0)\to\phi(p)}|^2 \left(e^{-\omega_{p} T-m t+\omega_{p}t}+e^{-m T-\omega_{p} t+mt} \right)\\
+=|A_{0\to2}|^2 e^{-E_{2p} \frac{T}{2}} \cosh\left(E_{2p}(t-\frac{T}{2}) \right)+
+|A_{\phi(0)\to\phi(p)}|^2 e^{-(\omega_p+m ) \frac{T}{2}} \cosh\left((\omega_p-m )(t-\frac{T}{2}) \right)
+$$
+We divide the correlator by the exponential of the termal pollution term
+$$
+c_w(t)=\frac{c(t)}{e^{-(\omega_p+m ) \frac{T}{2}} \cosh\left((\omega_p-m )(t-\frac{T}{2}) \right)}
+$$
+then we do a shift of the correlator
+$$
+c_{ws}(t)=c_w(t+1)-c_w(t)
+$$
+in this way we eliminate the dependence over $|A_{\phi(0)\to\phi(p)}|^2$ and we fit the two parameters $E_2$ and $A_{0\to2}$ 
+$$
+c_{ws}(t)=|A_{0\to2}|^2 \left\{\frac{e^{-E_{2p} \frac{T}{2}} \cosh\left(E_{2p}(t+1-\frac{T}{2}) \right)}
+{e^{-(\omega_p+m ) \frac{T}{2}} \cosh\left((\omega_p-m )(t+1-\frac{T}{2}) \right)}-
+\frac{e^{-E_{2p} \frac{T}{2}} \cosh\left(E_{2p}(t-\frac{T}{2}) \right)}
+{e^{-(\omega_p+m ) \frac{T}{2}} \cosh\left((\omega_p-m )(t-\frac{T}{2}) \right)}
+\right\}
+$$
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) , c(96,30) )
+
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+for (TL in TLs){
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E2_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt((m/2)^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )+m/2   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m/2)  +0.5*hatp2 )+m/2    )
+}
+
+gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+tmp<-get_energy("E2_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p1_ws",all_obs,mt,gg,"no")
+tmp<-get_energy("E2_0_p1_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p11_ws",all_obs,mt,gg,"no")
+tmp<-get_energy("E2_0_p11_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_p111_ws",all_obs,mt,gg,"no")
+tmp<-get_energy("E2_0_p111_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E2_0_A1",all_obs,mt,gg,"no")
+
+
+
+fig<- ggplotly(gg)%>%config(mathjax='cdn')%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$ c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+
+df <-data.frame("p2"=p2,"E1"=E1s,"E1err"=E1serr, "cont_disp"=cont_disp , "latt_disp"=latt_disp)
+
+}
+#g1<- ggplot()+ geom_point(df ,mapping= aes(x=p2, y=E1)  )+
+#  geom_errorbar(df ,mapping= aes(x=p2, ymin=E1-E1err, ymax=E1+E1err),width=0.005  )+ theme_bw()+
+#  geom_line(df ,mapping= aes(x=p2, y=cont_disp,,color="cont"))+
+#  geom_line(df ,mapping= aes(x=p2, y=latt_disp,color="lattice"))
+#ggplotly(g1)%>%layout(title="dispersion relation" ,xaxis = list(title = TeX("p^2"),showexponent = "all", exponentformat = "e" ,  autorange = T  ) ,
+#                      yaxis = list(title = TeX("E_2(P)"),showexponent = "all", exponentformat = "e", autorange = T  )) 
+```
+
+### Residual plot Ws 
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) , c(96,30)  )
+
+for (TL in TLs){
+gg<- ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E2_0",all_obs,mt)[1]  
+
+gg<-add_res_plot("E2_0",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p1_ws",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p11_ws",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p111_ws",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_A1",all_obs,mt,gg,"no")
+
+fig<-ggplotly(gg, dynamicTicks = TRUE)%>%config(mathjax='cdn')%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" ,  autorange = T  ) ,
+                      yaxis = list(title = "res $ c(t)$",showexponent = "all", exponentformat = "e",range=c(-1,1), autorange = F  ))  
+print(htmltools::tagList(fig))
+
+}
+
+
+df <-data.frame("p2"=p2,"E1"=E1s,"E1err"=E1serr, "cont_disp"=cont_disp , "latt_disp"=latt_disp)
+
+```
+
+
+## Compare the two methods for E2  
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) , c(96,30) )
+
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+
+for (TL in TLs){
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+ws<-c()
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E2_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt((m/2)^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )+m/2   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m/2)  +0.5*hatp2 )+m/2    )
+}
+
+
+tmp<-get_energy("E2_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_p1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_p11",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_p111",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_A1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+
+tmp<-get_energy("E2_0_p1_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_p11_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+tmp<-get_energy("E2_0_p111_ws",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+ws<-c(ws,"2par","3par","3par","3par","2par","ws","ws","ws" )
+
+df <-data.frame("p2"=p2,"E1"=E1s,"E1err"=E1serr, "ws"=ws ,  "cont_disp"=cont_disp , "latt_disp"=latt_disp)
+
+g1<- ggplot()+ geom_point(df ,mapping= aes(x=p2, y=E1 ,color=ws)  )+
+geom_errorbar(df ,mapping= aes(x=p2, ymin=E1-E1err, ymax=E1+E1err, color=ws),width=0.005  )+ theme_bw()
+#  geom_line(df ,mapping= aes(x=p2, y=cont_disp,,color="cont"))+
+#  geom_line(df ,mapping= aes(x=p2, y=latt_disp,color="lattice"))
+fig<-ggplotly(g1)%>%layout(title="dispersion relation" ,xaxis = list(title = TeX("p^2"),showexponent = "all", exponentformat = "e" ,  autorange = T  ) ,
+                      yaxis = list(title = TeX("E_2(P)"),showexponent = "all", exponentformat = "e", autorange = T  )) 
+print(htmltools::tagList(fig))
+}
+
+```
+
+
+```{r }
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```
+

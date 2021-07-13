@@ -1,0 +1,536 @@
+# E3 {#E3}
+
+
+```{r  include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+
+
+
+Operators:
+
+ - $O_3= \phi(0)\phi(0)\phi(0)$ 
+
+ - $O_3^{P_x}= \phi(p_x)\phi(0)\phi(0)$ 
+ 
+ - $O_3^{P_{xy}}= \phi(p_{xy})\phi(0)\phi(0)$ 
+ 
+ - $O_3^{P_{xyz}}= \phi(p_{xyz})\phi(0)\phi(0)$
+ 
+ - $O_3^{A1}= \sum_{i=x,y,z}\phi(0)\phi(p_i)\phi(-p_i)$ 
+ 
+Correlators:
+
+ - $C_3=\langle O_3(0)O_3(t)\rangle$ 
+ 
+   $$
+       c_3(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)+\\
+        |A_{2-1}|^2 \exp(-(E_2+M) \frac{T}{2}) \cosh\left((E_2-M) (t-\frac{T}{2})\right).
+  $$
+
+
+ - $C_3^{P1}=\sum_{i=x,y,z} \langle O_3^{P_i}(0)O_3^{P_i}(t)\rangle$ 
+ 
+  $$
+       c_3^{P1}(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)+\\
+        |A_{2p-1}|^2 \exp(-(E_2(p)+M) \frac{T}{2}) \cosh\left((E_2(p)-M) (t-\frac{T}{2})\right)+\\
+        |A_{2-1p}|^2 \exp(-(E_2+E_1(p)) \frac{T}{2}) \cosh\left((E_2-E_1(p)) (t-\frac{T}{2})\right)+\\
+  $$
+ 
+ - $C_3^{P11}=\sum_{i=xy,yz,zx} \langle O_3^{P_i}(0)O_3^{P_i}(t)\rangle$ 
+ 
+ - $C_3^{P11}= \langle O_3^{P_{xyz}}(0)O_3^{P_{xyz}}(t)\rangle$
+ 
+ - $O_3^{A1}=\langle O_3^{A1}(0)O_3^{A1}(t)\rangle$ 
+ 
+ $$
+       c_3^{A1}(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)+\\
+        |A_{2A1-1}|^2 \exp(-(E_{2A1}+M) \frac{T}{2}) \cosh\left((E_{2A1}-M) (t-\frac{T}{2})\right)+\\
+        |A_{2p-1p}|^2 \exp(-(E_2(p)+E_1(p)) \frac{T}{2}) \cosh\left((E_2(p)-E_1(p)) (t-\frac{T}{2})\right)
+        %+\\        |A_{1-0}|^2 \exp(-M \frac{T}{2}) \cosh\left( M (t-\frac{T}{2})\right)
+  $$
+
+
+## Plot
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+
+for (TL in TLs){
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("E3_0",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p1",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p11",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_A1",all_obs,mt,gg,"yes")
+fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+}
+```
+
+
+### residual plot 
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+gg<-ggplot()
+
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_res_plot("E3_0",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p1",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p11",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p111",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_A1",all_obs,mt,gg,"no")
+
+}
+
+ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$c(t)-\\mbox{fit}$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+```
+
+
+## vev of $\phi^2$
+
+We had a new exponential in the fitting of the three particle correlator   because   $\langle 0|\phi^2| 0 \rangle\neq 0$ and so
+$\langle \phi |\phi^3| 0 \rangle\neq 0$
+
+
+Operators:
+
+ - $O_3= \phi(0)\phi(0)\phi(0)$ 
+
+ - $O_3^{P_x}= \phi(p_x)\phi(0)\phi(0)$ 
+ 
+ - $O_3^{P_{xy}}= \phi(p_{xy})\phi(0)\phi(0)$ 
+ 
+ - $O_3^{P_{xyz}}= \phi(p_{xyz})\phi(0)\phi(0)$
+ 
+ - $O_3^{A1}= \sum_{i=x,y,z}\phi(0)\phi(p_i)\phi(-p_i)$ 
+ 
+Correlators:
+
+ - $C_3=\langle O_3(0)O_3(t)\rangle$ 
+ 
+   $$
+       c_3(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)\\
+        +|A_{2-1}|^2 \exp(-(E_2+M) \frac{T}{2}) \cosh\left((E_2-M) (t-\frac{T}{2})\right)\\
+        +|A_{0-1}|^2 \exp(-(M) \frac{T}{2}) \cosh\left((M) (t-\frac{T}{2})\right)
+  $$
+
+
+ - $C_3^{P1}=\sum_{i=x,y,z} \langle O_3^{P_i}(0)O_3^{P_i}(t)\rangle$ 
+ 
+  $$
+       c_3^{P1}(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)\\
+        +|A_{2p-1}|^2 \exp(-(E_2(p)+M) \frac{T}{2}) \cosh\left((E_2(p)-M) (t-\frac{T}{2})\right)\\
+        +|A_{2-1p}|^2 \exp(-(E_2+E_1(p)) \frac{T}{2}) \cosh\left((E_2-E_1(p)) (t-\frac{T}{2})\right)\\
+        +|A_{0-1p}|^2 \exp(-E_1(p) \frac{T}{2}) \cosh\left(E_1(p) (t-\frac{T}{2})\right)
+  $$
+ 
+ - $C_3^{P11}=\sum_{i=xy,yz,zx} \langle O_3^{P_i}(0)O_3^{P_i}(t)\rangle$ 
+ 
+ - $C_3^{P11}= \langle O_3^{P_{xyz}}(0)O_3^{P_{xyz}}(t)\rangle$
+ 
+ - $O_3^{A1}=\langle O_3^{A1}(0)O_3^{A1}(t)\rangle$ 
+ 
+ $$
+       c_3^{A1}(t)=|A_{3-0}|^2 \exp(-E_3 \frac{T}{2}) \cosh\left(E_3 (t-\frac{T}{2})\right)+\\
+        |A_{2A1-1}|^2 \exp(-(E_{2A1}+M) \frac{T}{2}) \cosh\left((E_{2A1}-M) (t-\frac{T}{2})\right)+\\
+        |A_{2p-1p}|^2 \exp(-(E_2(p)+E_1(p)) \frac{T}{2}) \cosh\left((E_2(p)-E_1(p)) (t-\frac{T}{2})\right)+\\
+        |A_{1-0}|^2 \exp(-M \frac{T}{2}) \cosh\left( M (t-\frac{T}{2})\right)
+  $$
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30) , c(96,30) )
+
+for (TL in TLs){
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p11_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p111_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_A1_vev",all_obs,mt,gg,"yes")
+fig<-ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+}
+```
+
+
+
+
+### residual plot 
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+gg<-ggplot()
+
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_res_plot("E3_0_vev",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p11_vev",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_p111_vev",all_obs,mt,gg,"no")
+gg<-add_res_plot("E3_0_A1_vev",all_obs,mt,gg,"no")
+
+}
+
+ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$c(t)-\\mbox{fit}$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+```
+
+
+## Compare E3 fit
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+gg<-ggplot()
+
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("E3_0",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p1",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p11",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p11_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_p111_vev",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_A1",all_obs,mt,gg,"yes")
+gg<-add_plot("E3_0_A1_vev",all_obs,mt,gg,"yes")
+
+}
+
+#ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+#       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+```
+
+### plotting the exponential for A1
+
+
+```{r, echo=FALSE,results='asis'}
+e1<-c()
+e2<-c()
+e3<-c()
+e4<-c()
+T<-48
+L<-30
+tf<-16
+#read the energies
+dir<-"../out"
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+E3_A1=0.72
+E1_0=get_energy("E1_0",all_obs,mt)[1]
+E2_0_A1=get_energy("E2_0_A1",all_obs,mt)[1]
+E1_0_p1=get_energy("E1_0_p1",all_obs,mt)[1]
+E2_0_p1=get_energy("E2_0_p1",all_obs,mt)[1]
+
+E2_0=get_energy("E2_0",all_obs,mt)[1]
+
+cat("$E_{3A1}$=",E3_A1," this is an estimate  \n\n" )
+cat("$E_{\\phi_0}$=",E1_0,"\n\n" )
+cat("$E_{A1}$=",E2_0_A1,"\n\n" )
+cat("$E_{\\phi_0}(p_x)$=",E1_0_p1,"\n\n" )
+cat("$E_{2\\phi_0}(p_x)$=",E2_0_p1,"\n\n" )
+cat("$E_{2\\phi_0}(0)$=",E2_0,"\n\n" )
+t<-c(0:480)/20
+e1<-c(e1, exp(-E3_A1*T/2) *cosh(E3_A1*(t-T/2) ) )
+e2<-c(e2, exp(-(E1_0+E2_0_A1 ) *T/2) *cosh((E1_0-E2_0_A1)*(t-T/2) ) )
+e3<-c(e3, exp(-(E1_0_p1+E2_0_p1 ) *T/2) *cosh((E1_0_p1-E2_0_p1)*(t-T/2) ) )
+e4<-c(e4, exp(-(E1_0) *T/2) *cosh((E1_0)*(t-T/2) ) )
+
+gg<-ggplot()+geom_line(aes(x=t,y=log10(e1), color="1"))+theme_bw()
+gg<-   gg   +geom_line(aes(x=t,y=log10(e2), color="2"))
+gg<-   gg   +geom_line(aes(x=t,y=log10(e3), color="3"))
+gg<-   gg   +geom_line(aes(x=t,y=log10(e4), color="4"))
+gg
+
+```
+
+Contribution 4 is the dominant
+
+### plotting the exponential for p=(1,0,0) 
+
+
+```{r, echo=TRUE,results='asis'}
+e1<-c()
+e2<-c()
+e3<-c()
+e4<-c()
+T<-48
+L<-30
+tf<-16
+#read the energies
+dir<-"../out"
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+E3_0_p1=get_energy("E3_0_p1",all_obs,mt)[1]
+E1_0=get_energy("E1_0",all_obs,mt)[1]
+E2_0_p1=get_energy("E2_0_p1",all_obs,mt)[1]
+E1_0_p1=get_energy("E1_0_p1",all_obs,mt)[1]
+E2_0=get_energy("E2_0",all_obs,mt)[1]
+cat("$E_{3\\phi_0}(p)$=",E3_0_p1,"\n\n" )
+cat("$E_{\\phi_0}$=",E1_0,"\n\n" )
+cat("$E_{2\\phi_0}(p_x)$=",E2_0_p1,"\n\n" )
+cat("$E_{\\phi_0}(p_x)$=",E1_0_p1,"\n\n" )
+cat("$E_{2\\phi_0}(0)$=",E2_0,"\n\n" )
+
+
+
+t<-c(0:480)/20
+e1<-c(e1, exp(-E3_0_p1*T/2) *cosh(E3_0_p1*(t-T/2) ) )
+e2<-c(e2, exp(-(E1_0+E2_0_p1 ) *T/2) *cosh((E1_0-E2_0_p1)*(t-T/2) ) )
+e3<-c(e3, exp(-(E1_0_p1+E2_0 ) *T/2) *cosh((E1_0_p1-E2_0)*(t-T/2) ) )
+e4<-c(e4, exp(-(E1_0_p1) *T/2) *cosh((E1_0_p1)*(t-T/2) ) )
+
+gg<-ggplot()+geom_line(aes(x=t,y=log10(e1), color="1"))
+gg<-   gg   +geom_line(aes(x=t,y=log10(e2), color="2"))
+gg<-   gg   +geom_line(aes(x=t,y=log10(e3), color="3"))+theme_bw()
+gg<-   gg   +geom_line(aes(x=t,y=log10(e4), color="4"))
+gg
+
+```
+
+The contribution 4 is dominant but has the same time dependence of contribution 2.
+
+
+## E3 CM
+
+
+```{r, echo=FALSE,results='asis'}
+
+TLs<-list(c(48,30),c(96,30), c(32,28), c(32,30), c(32,32),  c(32,36) )
+gg<-ggplot()
+dfree<- data.frame()
+momentum<-c()
+E3CMfree<-c()
+E3CMfree_lat<-c()
+E3CM<-c()
+E3CM<-c()
+E3CMerr<-c()
+mycol<-c()
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+string=sprintf("\\b%s\\b","E1_0")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-gsub('\\\\b','',string)
+n<-all_obs[l,"n"]
+fit<- get_fit_n(mt,n)
+m0<-fit[1,1]
+momenta<-data.frame(c(0,0,0,0,0,0,0,0,0),c(1,0,0,0,0,0,0,0,0),c(1,1,0,0,0,0,0,0,0),c(1,1,1,0,0,0,0,0,0),c(1,0,0,-1,0,0,0,0,0) ) # ,                  c(2,0,0,0,0,0,0,0,0),c(2,2,0,0,0,0,0,0,0),c(2,2,2,0,0,0,0,0,0),c(1,0,0,1,0,0,0,0,0), c(1,0,0,0,1,0,0,0,0), c(2,1,0,0,0,0,0,0,0),c(2,1,1,0,0,0,0,0,0))
+count=1
+
+for (p in momenta){
+  norm= p[1]^2+p[2]^2+p[3]^2
+  norm=norm*(2*pi/L)^2
+  norm1= p[4]^2+p[5]^2+p[6]^2
+  norm1=norm1*(2*pi/L)^2
+  norm2= p[7]^2+p[8]^2+p[9]^2
+  norm2=norm2*(2*pi/L)^2
+  
+  norm_tot= (p[1]+p[4]+p[7])^2+(p[2]+p[5]+p[8])^2+(p[3]+p[6]+p[9])^2
+  norm_tot=norm_tot*(2*pi/L)^2
+  E2=sqrt(m0^2+norm1)+ sqrt(m0^2+norm )+ sqrt(m0^2+norm2 )
+  E2cm=sqrt(E2^2-norm_tot)
+  s=sprintf("(%d,%d,%d)(%d,%d,%d)(%d,%d,%d)",p[1],p[2],p[3],p[4],p[5],p[6],p[7],p[8],p[9])
+  momentum<-c(momentum,s)
+  E3CMfree<-c(E3CMfree,E2cm)
+  
+  hatp2=4* ( sin(pi*p[1]/L)^2+sin(pi*p[2]/L)^2+sin(pi*p[3]/L)^2   )
+  Efl<-acosh(cosh(m0) + 0.5*hatp2  )
+  hatp2=4* (sin(pi*p[4]/L)^2+sin(pi*p[5]/L)^2+sin(pi*p[6]/L)^2   )
+  Efl<-Efl +acosh(cosh(m0) + 0.5*hatp2  )
+  hatp2=4* (sin(pi*p[7]/L)^2+sin(pi*p[8]/L)^2+sin(pi*p[9]/L)^2   )
+  Efl<-Efl +acosh(cosh(m0) + 0.5*hatp2  )
+  Efl=sqrt(Efl^2-norm_tot)
+  E3CMfree_lat <- c(E3CMfree_lat,Efl)
+  #dfree[count,]<- list(s, E2cm ,  0  )
+  #count=count+1
+}
+
+obs<-list("E3_0_vev","E3_0_p1_vev","E3_0_p11_vev","E3_0_p111_vev","E3_0_A1_vev")
+
+for (ob in obs){
+ string=sprintf("\\b%s\\b",ob)# need to put the delimiters on the word to grep  
+ l<-grep(string,all_obs[,"corr"])
+ label<-gsub('\\\\b','',string)
+ n<-all_obs[l,"n"]
+ fit<- get_fit_n(mt,n)
+ E3CM<-c(E3CM,fit[2,1] )
+ E3CMerr<-c(E3CMerr,fit[2,2] )
+ cat(label,"=",mean_print( fit[2,1],fit[2,2] ),'\n\n')
+ mycol<-c(mycol, paste0("L",L,"T",T) )
+
+}
+
+}
+
+dfree<- data.frame("momentum"=momentum)
+
+dfree$E3CMfree  <- E3CMfree
+dfree$E3CMfree_lat <- E3CMfree_lat
+dfree$E3CM  <- E3CM
+dfree$E3CMerr  <- E3CMerr
+dfree$mycol  <- mycol
+
+# E free
+gg<-gg+geom_point(data=dfree, mapping=aes(x=momentum,  y=E3CMfree/m0, color=mycol) ,  size = 0.1 )
+
+gg<-gg+geom_errorbar(data=dfree, mapping=aes(x=momentum,      ymin=E3CMfree/m0,ymax=E3CMfree/m0, color=mycol) ,  width = 0.3 )
+
+#free-latt
+gg<-gg+geom_point(data=dfree, mapping=aes(x=momentum,  y=E3CMfree_lat/m0, color=paste0(mycol,"free-latt")) ,  size = 0.1 )
+gg<-gg+geom_errorbar(data=dfree, mapping=aes(x=momentum,  ymin=E3CMfree_lat/m0,ymax=E3CMfree_lat/m0, color=paste0(mycol,"free-latt") ) ,  width = 0.4 )
+#g<-gg+geom_errorbar(data=dfree, mapping=aes(x=momentum,      ymin=E3CMfree/m0,ymax=E3CMfree/m0, color=mycol) ,  width = 0.3 )
+
+# data
+gg<-gg+geom_point( data=dfree, mapping=aes(x=momentum,      y=E3CM/m0, color=mycol )  , width = 0.2     )
+gg<-gg+geom_errorbar( data=dfree, mapping=aes(x=momentum,      ymin=(E3CM-E3CMerr)/m0,ymax=(E3CM+E3CMerr)/m0, color=mycol)  , width = 0.2     )
+#gg<- gg+coord_cartesian(xlim=c(0,8),ylim=c(0.25,0.4))
+gg <- gg+ggplot2::theme_bw()+ theme(axis.text.x = element_text(angle = -45, vjust = 0, hjust=0))
+fig<-ggplotly(gg, dynamicTicks = TRUE) %>% layout( yaxis = list(title = "$E_3^{CM}/m_0$"))#%>%config(mathjax = "cdn")
+fig
+kable(dfree) 
+```
+
+
+
+```{r, dev='tikz', results='asis' , warning=FALSE}
+gg<- ggplot(dfree)
+gg<- gg + geom_point(aes(x=momentum,y=(E3CM-E3CMfree)/m0 , color=mycol)  )
+gg<- gg + geom_errorbar(aes(x=momentum,ymin=(E3CM-E3CMerr-E3CMfree)/m0, ymax=(E3CM+E3CMerr-E3CMfree)/m0 , color=mycol) ,width=0.2 )
+gg<- gg + geom_point(aes(x=momentum,y=(E3CM-E3CMfree_lat)/m0 , color=paste0(mycol,"latt") )  )
+gg<- gg + geom_errorbar(aes(x=momentum,ymin=(E3CM-E3CMerr-E3CMfree_lat)/m0, ymax=(E3CM+E3CMerr-E3CMfree_lat)/m0 , color=paste0(mycol,"latt")  ),width=0.2 )
+
+
+gg <- gg+ggplot2::theme_bw()+ theme(axis.text.x = element_text(angle = -45, vjust = 0, hjust=0))
+# fig<-ggplotly(gg, dynamicTicks = TRUE) %>% layout( yaxis = list(title = "$\\Delta E_3^{CM}/m_0$"))
+
+fig<-myplotly(gg,ylabel="$\\Delta E_3^{CM}/m_0$")
+
+
+
+```
+
+## E3 Plateaux scan
+
+
+###  E3_0_A1
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(48,30)  )
+gg<-ggplot()
+
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_scan_plateaux",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file);
+all_obs<- get_all_corr(mt)
+off=0+0.004*(T-48)/48
+off1=0.004+0.004*(T-48)/48
+
+#gg<-add_plateaux_scan_plot("E3_0_A1",all_obs,mt,gg ,offset=off, ribbon=TRUE)
+
+}
+ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "tmin+0.01*tmax",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$E2 $",showexponent = "all", exponentformat = "e", autorange = F)) %>%config(mathjax = "cdn")
+#DT::datatable(mt)
+```
+

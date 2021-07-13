@@ -1,0 +1,159 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+## E2 CM
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+```{r, echo=FALSE,results='asis'}
+
+count=1
+dfree<- list()
+df<- data.frame("momentum"=c(0),"E2"=c(0),"err"=c(0),"corr"=c(0),"delta"=c(0),"deltaerr"=c(0),  "k"=c(0),"kerr"=c(0),"L"=c(0), "kcotd"=c(0),"kcotderr"=c(0), "T"=c(0))
+
+TLs<-list(c(48,30) ,c(96,30), c(32,28), c(32,30), c(32,32), c(32,36)  )
+gg<-ggplot()
+iTL=1
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+
+dir<-paste("../out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####", file,'\n\n')
+mt<-read_df(file)
+all_obs<-get_all_corr(mt)
+string=sprintf("\\b%s\\b","E1_0")# need to put the delimiters on the word to grep  
+l<-grep(string,all_obs[,"corr"])
+label<-paste(gsub('\\\\b','',string),"L=",L)
+n<-all_obs[l,"n"]
+fit<- get_fit_n(mt,n)
+m0<-fit[1,1]
+
+momenta<-data.frame(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0),c(1,0,0,-1,0,0))
+dfree[[iTL]]<- data.frame("momentum"=c(0),"E2"=c(0),"err"=c(0),"Efreelatt"=c(0))
+countfree=1
+for (p in momenta){
+  norm= p[1]^2+p[2]^2+p[3]^2
+  norm=norm*(2*pi/L)^2
+  norm1= p[4]^2+p[5]^2+p[6]^2
+  norm1=norm1*(2*pi/L)^2
+  norm_tot= (p[1]+p[4])^2+(p[2]+p[5])^2+(p[3]+p[6])^2
+  norm_tot=norm_tot*(2*pi/L)^2
+  E2=sqrt(m0^2+norm1)+ sqrt(m0^2+norm )
+  E2cm=sqrt(E2^2-norm_tot)
+  s=sprintf("(%d,%d,%d)(%d,%d,%d)",p[1],p[2],p[3],p[4],p[5],p[6])
+  hatp2=4* ( sin(pi*p[1]/L)^2+sin(pi*p[2]/L)^2+sin(pi*p[3]/L)^2   )
+  Efl<-acosh(cosh(m0) + 0.5*hatp2  )
+  hatp2=4* (sin(pi*p[4]/L)^2+sin(pi*p[5]/L)^2+sin(pi*p[6]/L)^2   )
+  Efl<-Efl +acosh(cosh(m0) + 0.5*hatp2  )
+  Efl=sqrt(Efl^2-norm_tot)
+  dfree[[iTL]][countfree,]<- list(s, E2cm ,  0,  Efl )
+  countfree=countfree+1
+}
+
+
+
+mom=1
+for ( s in c("E2_0_p1","E2_0_p11","E2_0_p111")){
+  
+  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
+  l<-grep(string,all_obs[,"corr"])
+  label<-paste(gsub('\\\\b','',string),"L=",L)
+  n<-all_obs[l,"n"]
+  fit<- get_fit_n(mt,n)
+  df[count,]<- list(dfree[[iTL]][mom+1,1],fit[2,1],fit[2,2] ,label,fit[2,5],fit[2,6],
+                    fit[2,7],fit[2,8],L,
+                    fit[2,9],fit[2,10],T)
+
+   #cat(label,"=", mean_print(fit[[count]][2,1],fit[[count]][2,2]),'\n')
+  count=count+1
+  mom=mom+1
+}
+for ( s in c("E2_0")){
+  
+  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
+  l<-grep(string,all_obs[,"corr"])
+  label<-paste(gsub('\\\\b','',string),"L=",L)
+  n<-all_obs[l,"n"]
+  fit<- get_fit_n(mt,n)
+  df[count,]<- list(dfree[[iTL]][1,1],fit[3,1],fit[3,2] ,label,fit[3,5],fit[3,6],
+                    fit[3,7],fit[3,8],L,
+                    fit[3,9],fit[3,10],T)
+    # list(dfree[1,1],fit[1,1],fit[1,2] ,label,fit[3,1],fit[3,2],
+    #                 fit[3,3],fit[3,4],L,
+    #                 fit[3,3],fit[3,4])
+
+   #cat(label,"=", mean_print(fit[[count]][2,1],fit[[count]][2,2]),'\n')
+  count=count+1
+}
+for ( s in c("E2_0_A1")){
+  
+  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
+  l<-grep(string,all_obs[,"corr"])
+  label<-paste(gsub('\\\\b','',string),"L=",L)
+  n<-all_obs[l,"n"]
+  fit<- get_fit_n(mt,n)
+  df[count,]<- list(dfree[[iTL]][5,1],fit[2,1],fit[2,2] ,label,fit[2,5],fit[2,6],
+                    fit[2,7],fit[2,8],L,
+                    fit[2,9],fit[2,10],T)
+    #list(dfree[5,1],fit[1,1],fit[1,2] ,label, fit[2,5],fit[2,6],fit[2,7],fit[2,8],L)
+
+   #cat(label,"=", mean_print(fit[[count]][2,1],fit[[count]][2,2]),'\n')
+  count=count+1
+}
+
+dfree[[iTL]]$col_free_latt<- paste0("free-latt L",L,"T",T)
+dfree[[iTL]]$col_free<- paste0("free L",L,"T",T)
+
+#gg<- gg+ scale_color_manual(values=c("blue","red", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black", "black"))
+gg<-gg+geom_point(data=dfree[[iTL]], mapping=aes(x=momentum,    y=E2, color=col_free ) ,  size = 0.1 )
+gg<-gg+geom_errorbar(data=dfree[[iTL]], mapping=aes(x=momentum,    ymin=E2,ymax=E2, color=col_free ) ,  width = 0.4 )
+
+#free-latt
+gg<-gg+geom_point(data=dfree[[iTL]], mapping=aes(x=momentum,  y=Efreelatt, color=col_free_latt) ,  size = 0.1 )
+gg<-gg+geom_errorbar(data=dfree[[iTL]], mapping=aes(x=momentum,  ymin=Efreelatt, ymax=Efreelatt, color=col_free_latt ) ,  width = 0.4 )
+#gg<- gg+coord_cartesian(xlim=c(0,8),ylim=c(0.25,0.4))
+# measured
+gg<-gg+geom_point(data=df, mapping=aes(x=momentum,      y=E2,color=paste("L",L,"T",T))  , width = 0.2     )
+gg<-gg+geom_errorbar(data=df, mapping=aes(x=momentum,      ymin=E2-err,ymax=E2+err,color=paste("L",L,"T",T))  , width = 0.2     )
+
+iTL=iTL+1
+
+}
+gg <- gg+ggplot2::theme_bw()+ labs(y = "E2_CM")
+
+  
+fig<-ggplotly(gg) %>% layout( yaxis = list(title = "$E_2^{CM}$"))#%>%config(mathjax = "cdn")
+fig
+
+#kable(df)
+#DT::datatable(df, filter = 'bottom')
+```
+
+

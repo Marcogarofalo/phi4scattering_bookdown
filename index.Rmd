@@ -1,0 +1,67 @@
+--- 
+title: "phi4-analysis"
+author: "Marco Garofalo"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography:
+- book.bib
+- packages.bib
+biblio-style: apalike
+link-citations: yes
+description: This book contain the result of the analysis of the phi4 scattering project
+---
+
+# Lagrangian
+
+ \begin{align}
+ & {\cal L}= {\cal L}_0+ {\cal L}_1+  {\cal L}_{IZ_2} \\
+ &{\cal L}_0= \frac{1}{2} \partial_\mu \varphi_0\partial_\mu \varphi_0 +\frac{1}{2}m_0^2 \varphi_0^2 +\lambda_0 \varphi_0^4 \\
+ &{\cal L}_1=\frac{1}{2} \partial_\mu \varphi_1\partial_\mu \varphi_1 +\frac{1}{2}m_1^2 \varphi_1^2+\lambda_1 \varphi_1^4 \\
+ &{\cal L}_{IZ_2}= \mu \varphi_0^2 \varphi_1^2 \\
+  &{\cal L}_{I}= g \varphi_1 \varphi_0^3
+ \end{align}
+On the lattice we can discretise the derivative 
+$\partial_\mu \varphi(x)=\frac{1}{a}(\varphi(x+\mu)-\varphi(x))$.
+On the lattice the above lagrangian can be written in a more convenient way for simulations
+\begin{align}
+ &{\cal L}_0= \sum_{x}\left[ -2\kappa_0\sum_\mu \phi_0(x) \phi_0({x+\mu}) +\lambda_L^0 \left( \phi_0(x)^2-1\right)^2+ \phi_0(x)^2  \right]\,,\\
+ &{\cal L}_1= \sum_{x}\left[ -2\kappa_1\sum_\mu \phi_1(x) \phi_1({x+\mu}) +\lambda_L^1 \left( \phi_1(x)^2-1\right)^2+ \phi_1(x)^2  \right]\,,\\
+ &{\cal L}_{IZ_2}= \mu_L  \sum_{x} \phi_0(x)^2 \phi_1(x)^2 \,,\\
+  &{\cal L}_{I}= g_L \sum_{x} \phi_1(x) \phi_0(x)^3 \,.
+ \end{align}
+With
+\begin{align}
+& m_0^2=\frac{1-2\lambda_L^0}{\kappa_0}-8\,,\quad \lambda_0=\frac{\lambda_L^0}{4\kappa_0^2}\,,\quad \varphi_0=\sqrt{2\kappa_0}\phi_0\\
+& m_1^2=\frac{1-2\lambda_L^1}{\kappa_1}-8\,,\quad \lambda_1=\frac{\lambda_L^1}{4\kappa_1^2}
+\,,\quad \varphi_1=\sqrt{2\kappa_1}\phi_1 \,,
+ \end{align}
+ and
+ \begin{align}
+\mu=\frac{\mu_L}{4\kappa_0\kappa_1} \,,\quad g=\frac{g_L}{4\sqrt{\kappa_0}\kappa_1^{3/2}}
+ \end{align}
+ 
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```
+
+#### necessary to set up the rendering inside loops rendering
+
+
+```{r }
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```
+

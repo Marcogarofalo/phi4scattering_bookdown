@@ -1,0 +1,135 @@
+# $m_0=-4.89$
+
+# E1
+
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ 
+ library(ggplot2)
+ library(plotly)
+ 
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ library(tidyverse)
+require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ # library(sigma)
+ source('functions.R')
+```
+
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(32,28) )# , c(96,30))
+
+for (TL in TLs){
+gg<-ggplot()
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../m0-4.89_m1-4.65/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.890000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E1_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt(m^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m)  +0.5*hatp2 )    )
+}
+
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p11",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p11",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p111",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p111",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+
+fig<-ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+
+print(htmltools::tagList(fig))
+#assign("fig", fig, envir=parent.frame())
+}
+
+```
+
+## Heavy mass
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(32,28) )# , c(96,30))
+
+for (TL in TLs){
+gg<-ggplot()
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../m0-4.89_m1-4.65/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.890000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E1_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt(m^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m)  +0.5*hatp2 )    )
+}
+
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+# tmp<-get_energy("E1_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+# gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+# tmp<-get_energy("E1_0_p1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+# gg<-add_plot("E1_0_p11",all_obs,mt,gg,"no")
+# tmp<-get_energy("E1_0_p11",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+# gg<-add_plot("E1_0_p111",all_obs,mt,gg,"no")
+# tmp<-get_energy("E1_0_p111",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+
+fig<-ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+
+print(htmltools::tagList(fig))
+#assign("fig", fig, envir=parent.frame())
+}
+
+```
