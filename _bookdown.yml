@@ -5,7 +5,8 @@ rmd_files: ["index.Rmd", "E1.Rmd", "E2.Rmd", "E2_CM.Rmd", "E2_plateaux.Rmd",
 "E3.Rmd" ,"matrix_element.Rmd", "report_fit_M0.Rmd", "report_fit_a_00.Rmd",
 "report_fit_phase_shift.Rmd", "report_fit_of_the_energy_levels.Rmd",
 "report_fit_QC3.Rmd","poly_E3.Rmd",
-"m0-4.89_E1.Rmd", "references.Rmd"]
+"m0-4.89_E1.Rmd",
+"E1_g0.25.Rmd", "references.Rmd"]
 language:
   ui:
     chapter_name: "Chapter "

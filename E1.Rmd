@@ -150,6 +150,24 @@ print(htmltools::tagList(fig))
 ```
 
 
+```{r, echo=FALSE,results='asis',dev='tikz'}
+df <-data.frame("p2"=p2,"E1"=E1s,"E1err"=E1serr, "cont_disp"=cont_disp , "latt_disp"=latt_disp)
+lab_cont<-  "$E_1(p)-\\sqrt{ M^2 + p^2 }$"
+g1<- ggplot()+ geom_point(df ,mapping= aes(x=p2, y=E1-cont_disp,
+                                           color=lab_cont, shape=lab_cont )  )+
+  geom_errorbar(df ,mapping= aes(x=p2, ymin=E1-E1err-cont_disp, ymax=E1+E1err-cont_disp,
+                      color=lab_cont,shape=lab_cont ),width=0.005  )+ theme_bw() 
+lab_latt<-paste0("$E_1(p)-\\cosh^-1\\left(\\cosh E(0) + \\frac{1}{2}\\sum_{i=1}^{3} 4 \\sin^2 \\frac{p_i}{2}\\right)$")
+g1<- g1+ geom_point(df ,mapping= aes(x=p2, y=E1-latt_disp, color=lab_latt,shape=lab_latt)  )+
+  geom_errorbar(df ,mapping= aes(x=p2, ymin=E1-E1err-latt_disp, ymax=E1+E1err-latt_disp, color=lab_latt,shape=lab_latt),width=0.005  ) 
+
+
+fig<- myplotly(g1,"","$p^2$","$E_1(p)-\\mbox{dispersion relation}$",legend_position=c(0.1,0.1))
+fig<- myplotly(g1,"","$p^2$","$E_1(p)-\\mbox{dispersion relation}$",legend_position=c(0.35,0.15), to_print = FALSE, save_pdf = "E1_0_disp_rel")
+
+
+```
+
 
 
 ```{r, fig.height=0.1, fig.width=0.1}

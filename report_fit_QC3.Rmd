@@ -10,7 +10,7 @@ library(knitr)
 
 #knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_chunk$set(fig.align='center',       comment='')
-knitr::opts_chunk$set(fig.width=8, fig.height=8) 
+knitr::opts_chunk$set(fig.width=8, fig.height=6) 
 require(ggplot2)
 require(scales) # to access break formatting functions
 library(latex2exp)
@@ -50,7 +50,7 @@ mom_lab<-function(vec){
 
 
 
-```{r, echo=FALSE, results='asis', , fig.width=8, fig.height=8}
+```{r, echo=FALSE, results='asis'}
 
  plot_QC3 <-function (basename, N){
 file=sprintf("%s_fit_data.txt",basename)

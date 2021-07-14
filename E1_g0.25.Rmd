@@ -1,0 +1,145 @@
+# g=0.25
+
+in tihs section we report the result with $g=0.25$
+
+# E1(g=0.25) 
+
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ 
+ library(ggplot2)
+ library(plotly)
+ 
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ library(tidyverse)
+require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ # library(sigma)
+ source('functions.R')
+```
+
+
+```{r, include=FALSE}
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```
+
+
+### light mass
+
+```{r, echo=FALSE,results='asis'}
+
+g<-0.25
+TLs<-list(c(32,28) )# , c(96,30))
+
+for (TL in TLs){
+gg<-ggplot()
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../g0.25/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E1_0",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt(m^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m)  +0.5*hatp2 )    )
+}
+
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p11",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p11",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+gg<-add_plot("E1_0_p111",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_0_p111",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+
+# fig<-ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+#                       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+
+fig<- myplotly(gg, "", " t","$m_{eff}$",xrange = c(0,14))
+#print(htmltools::tagList(fig))
+#assign("fig", fig, envir=parent.frame())
+}
+
+```
+
+
+
+### heavy mass
+
+```{r, echo=FALSE,results='asis'}
+
+g<-0.25
+TLs<-list(c(32,28) )# , c(96,30))
+
+for (TL in TLs){
+gg<-ggplot()
+momenta<-list(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0))
+p2<-c()
+E1s<-c()
+E1serr<-c()
+cont_disp<-c()
+latt_disp<-c()
+
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../g0.25/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+m<-get_energy("E1_1",all_obs,mt)[1]  
+
+for (ip in momenta){
+  p2<-c(p2,  (2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2   )  )
+  cont_disp<-c(cont_disp, sqrt(m^2+(2*pi/L)^2*(ip[1]^2+ip[2]^2+ip[3]^2)  )   )
+  hatp2=4* (sin(pi*ip[1]/L)^2+sin(pi*ip[2]/L)^2+sin(pi*ip[3]/L)^2   )
+  #latt_disp<-c(latt_disp, acosh(1+ 0.5*(m^2+hatp2))  )
+  latt_disp<-c(latt_disp, acosh(cosh(m)  +0.5*hatp2 )    )
+}
+
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+tmp<-get_energy("E1_1",all_obs,mt);E1s<-c(E1s,tmp[1]);E1serr<-c(E1serr,tmp[2])
+
+fig<- myplotly(gg, "", " t","$m_{eff}$",xrange = c(0,15))
+}
+
+```
