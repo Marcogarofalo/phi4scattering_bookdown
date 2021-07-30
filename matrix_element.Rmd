@@ -2,7 +2,7 @@
 
 
 ```{r , include=FALSE}
- knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis', fig.width = 8)
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
  
  library(ggplot2)
  library(plotly)

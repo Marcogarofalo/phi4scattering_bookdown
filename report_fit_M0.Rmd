@@ -25,7 +25,7 @@ library(ggrepel)
 
 
 ```{r, echo=FALSE}
-file=sprintf("../prova/M0_finite_vol_fit_data.txt")
+file=sprintf("../fit_out/M0_finite_vol_fit_data.txt")
 df<- read.table(file, header=FALSE, fill=TRUE)
 names(df) <- c("$L$","$M_0(L)$","err", "$T$")
 df<- df[c("$T$","$L$","$M_0(L)$","err" )] 
@@ -37,15 +37,15 @@ M_0(L)=P[0]  +P[1] \frac{e^{-ML}}{(ML)^{3/2}}
 $$
 
 
-```{r , child="../prova/M0_finite_vol_fit_P.tex", eval=TRUE}
+```{r , child="../fit_out/M0_finite_vol_fit_P.tex", eval=TRUE}
 ```
 
 
 
 ```{r,echo=FALSE}
-file=sprintf("../prova/M0_finite_vol_fit_data.txt")
-df<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err", "T","k","n"))
-file=sprintf("../prova/M0_finite_vol_fit_out_L.txt")
+file=sprintf("../fit_out/M0_finite_vol_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M0_finite_vol_fit_out_L.txt")
 df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err"))
 gg<- ggplot()
 #gg<-gg+ geom_point(data=df, mapping=aes(x=L , y=M0L) )

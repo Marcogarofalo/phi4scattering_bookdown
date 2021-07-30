@@ -120,7 +120,7 @@ ggp   # Let knitr handle the rendering naturally
 ```
 
 ```{r, echo=FALSE}
-file=sprintf("../fit_out/QC3_N2_fit_data.txt")
+file=sprintf("../fit_out/QC3_N1_latt_1par_fit_data.txt")
 df<- read.table(file, header=FALSE, fill=TRUE)
 names(df) <- c("$L$","$E_3/m$","err", "$T$","$q2$")
 df<- df[c("$T$","$L$","$E_3/m$","err" ,"$q2$")] 
@@ -139,7 +139,7 @@ for (p in momenta){
   myL<-c()
   myk<-c()
   E3_m<-c()
-  for (L in c(26:40)){
+  for (L in c(23:40)){
     norm= p[1]^2+p[2]^2+p[3]^2
     norm=norm*(2*pi/L)^2
     norm1= p[4]^2+p[5]^2+p[6]^2
@@ -221,15 +221,6 @@ plot_QC3(basename="../fit_out/QC3_N3_latt_1par",N=3)
 
 
 
-```{r , child="../fit_out/QC3_N4_1par_fit_P.tex", eval=TRUE}
-```
-
-
-```{r, echo=FALSE, results='asis'}
-plot_QC3(basename="../fit_out/QC3_N4_1par",N=4)
-
-```
-
 
 ### latt disp rel
 
@@ -247,49 +238,31 @@ plot_QC3(basename="../fit_out/QC3_N4_latt_1par",N=4)
 
 
 
-### two parameters 
-
-```{r , child="../fit_out/QC3_N4_latt_2par_fit_P.tex", eval=TRUE}
-```
-
-
-```{r, echo=FALSE, results='asis', eval=TRUE}
-
-plot_QC3(basename="../fit_out/QC3_N4_latt_2par",N=4)
-
-```
-
 
 
 
 
 ## p=(1,1,1)
 
+### latt disp rel
 
 
-```{r , child="../fit_out/QC3_N4_1par_fit_P.tex", eval=TRUE}
+```{r , child="../fit_out/QC3_N5_latt_1par_fit_P.tex", eval=TRUE}
 ```
 
 
 ```{r, echo=FALSE, results='asis'}
 
-plot_QC3(basename="../fit_out/QC3_N5_1par",N=5)
+plot_QC3(basename="../fit_out/QC3_N5_latt_1par",N=5)
 ```
 
 
 
 ## tests
 
-Nsteps=4
+
 
 ```{r , child="../fit_out/QC3_N3_latt_1par_fit_P.tex", eval=TRUE}
-```
-
-with more Nsteps=40
-
-
-
-```{r , child="../prova/QC3_N3_latt_1par_fit_P.tex", eval=TRUE}
 ```
 
 
@@ -338,17 +311,17 @@ for (n in c(1:N)){
 }
 
 
-# datalist2_1 = list()
-# for (n in c(1:N)){
-#  lab2_1<-"P[0]=1e+3 Nsteps=40"
-#  file=sprintf("../prova/kiso_P1e+3_n%d_L.txt", n-1)
-#  datalist2_1[[n]]<- read.table(file, header=FALSE, fill=TRUE,   
-#                   col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
-#  
-#  gg<-gg + geom_line(data=datalist2_1[[n]],
-#                     mapping=aes_string(x=datalist2_1[[n]][,1],
-#                            y=datalist2_1[[n]][,2],  fill=as.factor(lab2_1), shape=as.factor(lab2_1), color=as.factor(lab2_1))  )
-# }
+ datalist2_1 = list()
+ for (n in c(1:N)){
+  lab2_1<-"P[0]=-1e+3"
+  file=sprintf("../fit_out/kiso_P-1e+3_n%d_L.txt", n-1)
+  datalist2_1[[n]]<- read.table(file, header=FALSE, fill=TRUE,   
+                   col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+  
+  gg<-gg + geom_line(data=datalist2_1[[n]],
+                     mapping=aes_string(x=datalist2_1[[n]][,1],
+                            y=datalist2_1[[n]][,2],  fill=as.factor(lab2_1), shape=as.factor(lab2_1), color=as.factor(lab2_1))  )
+ }
 
 
 datalist1 = list()
@@ -366,18 +339,4 @@ for (n in c(1:N)){
 
 fig<-myplotly(gg, "", "L","$E_3/m$", to_print = FALSE)
 fig
-```
-
-### 2 par latt disp rel
-
-
-
-```{r , child="../fit_out/QC3_N5_latt_2par_fit_P.tex", eval=TRUE}
-```
-
-
-```{r, echo=FALSE, results='asis'}
-
-plot_QC3(basename="../fit_out/QC3_N5_latt_2par",N=5)
-
 ```

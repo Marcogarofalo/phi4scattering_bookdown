@@ -141,3 +141,178 @@ gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
 fig<-myplotly(gg,"fit","$k^2$","$k \\cot\\delta$",c(-0.001, 0.06), c(-3,-0.5),to_print=FALSE  )
 fig
 ```
+
+
+
+## 2 parameter fit
+
+### Continuum
+
+```{r , child="../fit_out/kcotd_2par_fit_P.tex", eval=TRUE}
+```
+
+```{r,echo=FALSE}
+file=sprintf("../fit_out/kcotd_2par_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE)
+names(df) <- c("$L$","$k \\cot(\\delta)$","err", "$T$","$k$")
+df<- df[c("$T$","$L$","$k \\cot(\\delta)$","err" ,"$k$")] 
+df$"$q^2$"<-(df[,5]*df[,2]/(2*pi))^2
+
+file=sprintf("../fit_out/kcotd_2par_fit_out_k.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("x","fit","fiterr"))
+gg<- ggplot()
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,5]^2 , y=df[,3],
+                          color=as.factor(df[,2])) ,width=0.001)+labs(color = "L")
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,5]^2 , ymin=df[,3]-df[,4],
+                          ymax=df[,3]+df[,4],color=as.factor(df[,2])) ,width=0.001)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=x*x , ymin=fit-fiterr, ymax=fit+fiterr),fill="blue",alpha=0.2)
+gg<-gg + geom_line(data=df_fit, mapping=aes(x=x*x , y=fit),fill="blue")
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+fig<-myplotly(gg,"fit","$k^2$","$k \\cot\\delta$",c(-0.001, 0.06), c(-3,-0.5),to_print=FALSE  )
+fig
+```
+### Latt $E-E^{free-latt}+E^{free-cont}$
+
+```{r , child="../fit_out/kcotd_Elatt_2par_fit_P.tex", eval=TRUE}
+```
+
+```{r,echo=FALSE}
+file=sprintf("../fit_out/kcotd_Elatt_2par_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE)
+names(df) <- c("$L$","$k \\cot(\\delta)$","err", "$T$","$k$")
+df<- df[c("$T$","$L$","$k \\cot(\\delta)$","err" ,"$k$")] 
+df$"$q^2$"<-(df[,5]*df[,2]/(2*pi))^2
+
+file=sprintf("../fit_out/kcotd_Elatt_2par_fit_out_k.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("x","fit","fiterr"))
+gg<- ggplot()
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,5]^2 , y=df[,3],
+                          color=as.factor(df[,2])) ,width=0.001)+labs(color = "L")
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,5]^2 , ymin=df[,3]-df[,4],
+                          ymax=df[,3]+df[,4],color=as.factor(df[,2])) ,width=0.001)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=x*x , ymin=fit-fiterr, ymax=fit+fiterr),fill="blue",alpha=0.2)
+gg<-gg + geom_line(data=df_fit, mapping=aes(x=x*x , y=fit),fill="blue")
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+fig<-myplotly(gg,"fit","$k^2$","$k \\cot\\delta$",c(-0.001, 0.06), c(-3,-0.5),to_print=FALSE  )
+fig
+```
+
+
+### Latt $E_{CM}$ with disp rel
+
+```{r , child="../fit_out/kcotd_ECM_latt_2par_fit_P.tex", eval=TRUE}
+```
+
+```{r,echo=FALSE}
+library(ggplot2)
+library(Rose)
+library(dplyr)
+library(plotly)
+file=sprintf("../fit_out/kcotd_ECM_latt_2par_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE)
+names(df) <- c("$L$","$k \\cot(\\delta)$","err", "$T$","$k$")
+df<- df[c("$T$","$L$","$k \\cot(\\delta)$","err" ,"$k$")] 
+df$"$q^2$"<-(df[,5]*df[,2]/(2*pi))^2
+
+file=sprintf("../fit_out/kcotd_ECM_latt_2par_fit_out_k.txt")
+
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("x","fit","fiterr"))
+gg<- ggplot()
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,5]^2 , y=df[,3],
+                          color=as.factor(df[,2])) ,width=0.001)+labs(color = "L")
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,5]^2 , ymin=df[,3]-df[,4],
+                          ymax=df[,3]+df[,4],color=as.factor(df[,2])) ,width=0.001)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=x*x , ymin=fit-fiterr, ymax=fit+fiterr),fill="blue",alpha=0.2)
+gg<-gg + geom_line(data=df_fit, mapping=aes(x=x*x , y=fit),fill="blue")
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+fig<-myplotly(gg,"fit","$k^2$","$k \\cot\\delta$",c(-0.001, 0.06),to_print=FALSE  )
+fig
+```
+
+
+
+### to generate the pdf plot
+
+continuum disp
+
+```{r , child="../fit_out/delta_2par_fit_P.tex", eval=TRUE}
+```
+
+lattice disp
+
+```{r , child="../fit_out/delta_Elatt_2par_fit_P.tex", eval=TRUE}
+```
+
+
+```{r,echo=FALSE}
+file=sprintf("../fit_out/delta_2par_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE)
+names(df) <- c("$L$","$k \\cot(\\delta)$","err", "$T$","$k$", "level","k_m")
+df<- df[c("$T$","$L$","$k \\cot(\\delta)$","err" ,"$k$","level", "k_m")] 
+df$"$q^2$"<-(df[,5]*df[,2]/(2*pi))^2
+
+file=sprintf("../fit_out/delta_2par_fit_out_k_m.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("x","fit","fiterr"))
+gg<- ggplot()
+lab1<-"$\\!\\!\\! E_2-E_2^{free,latt}+E_2^{free,cont}$"
+lab<-"$\\!\\!\\! E_2$" 
+
+gg<- gg+scale_color_manual(labels=c(lab,lab1),values=c("red","blue"))
+gg<- gg+scale_shape_manual(labels=c(lab,lab1),values=c(1,2))
+gg<- gg+scale_fill_manual(labels=c(lab,lab1),values=c("red","blue"))
+n<-"a"
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,7]^2 , y=df[,3],
+                          color=n, shape=n) ,width=0.001)
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,7]^2 , ymin=df[,3]-df[,4],
+                          ymax=df[,3]+df[,4],color=n, shape=n) ,width=0.001)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=x*x , ymin=fit-fiterr, ymax=fit+fiterr, color=n, shape=n, fill=n), color=NA,alpha=0.2)
+#gg<-gg + geom_line(data=df_fit, mapping=aes(x=x*x , y=fit),fill="blue")
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+fig<-myplotly(gg,"","$k^2/M_0^2$","$\\delta$",c(-0.001, 3.075), c(-1.5,0),to_print=FALSE , output="PDF",legend_position = c(0.66,0.89))
+save_pdf="kcot_cont"
+texfile=paste0(save_pdf,".tex")
+tikzDevice::tikz(texfile,standAlone=TRUE, width = 5/1.618033, height = 5/1.618033)
+plot(fig)
+dev.off()
+tools::texi2dvi(paste0(save_pdf,".tex"),pdf=TRUE)
+
+#################################################################
+n1<-"b"
+
+file=sprintf("../fit_out/delta_Elatt_2par_fit_data.txt")
+df1<- read.table(file, header=FALSE, fill=TRUE)
+names(df1) <- c("$L$","$k \\cot(\\delta)$","err", "$T$","$k$", "level","$k_m$")
+df1<- df1[c("$T$","$L$","$k \\cot(\\delta)$","err" ,"$k$","level","$k_m$")] 
+df1$"$q^2$"<-(df1[,5]*df1[,2]/(2*pi))^2
+
+file=sprintf("../fit_out/delta_Elatt_2par_fit_out_k_m.txt")
+df_fit1<- read.table(file, header=FALSE, fill=TRUE,col.names = c("x","fit","fiterr"))
+
+gg<-gg+  geom_point(data=df1, mapping=aes(x=df1[,7]^2 , y=df1[,3],
+                          color=n1, shape=n1) ,width=0.001)
+gg<-gg + geom_errorbar(data=df1, mapping=aes(x=df1[,7]^2 , ymin=df1[,3]-df1[,4],
+                          ymax=df1[,3]+df1[,4],color=n1, shape=n1) ,width=0.001)
+gg<-gg + geom_ribbon(data=df_fit1, mapping=aes(x=x*x , ymin=fit-fiterr, ymax=fit+fiterr, color=n1, shape=n1, fill=n1),color=NA,alpha=0.2)
+#gg<-gg + geom_line(data=df_fit1, mapping=aes(x=x*x , y=fit))
+
+gg<- gg+theme_bw() #+ ggplot2::coord_cartesian(xlim=c(0,0.05), ylim=c(-3,0 ))
+
+
+fig<-myplotly(gg,"","$k^2/M_0^2$","$\\delta$",c(-0.001, 3.075), c(-1.5,0),to_print=FALSE  ,
+              output = "PDF",legend_position = c(0.70,0.86))
+save_pdf = "kcot_latt"
+texfile=paste0(save_pdf,".tex")
+tikzDevice::tikz(texfile,standAlone=TRUE, width = 5/1.618033, height = 5/1.618033)
+plot(fig)
+dev.off()
+tools::texi2dvi(paste0(save_pdf,".tex"),pdf=TRUE)
+
+```

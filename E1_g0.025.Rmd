@@ -1,8 +1,8 @@
-# g=0.25
+# g=0.025
 
-in tihs section we report the result with $g=0.25$
+in tihs section we report the result with $g=0.025$
 
-# E1(g=0.25) 
+## E1(g=0.025) 
 
 
 
@@ -51,7 +51,7 @@ ggp   # Let knitr handle the rendering naturally
 
 ```{r, echo=FALSE,results='asis'}
 
-g<-0.25
+g<-0.025
 TLs<-list(c(32,28) )# , c(96,30))
 
 for (TL in TLs){
@@ -65,7 +65,7 @@ latt_disp<-c()
 
 T<- TL[1]
 L<- TL[2]
-dir<-paste("../../g0.25/out")
+dir<-paste("../../g0.025/out")
 file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
 cat("\n####",file,'\n\n')
 

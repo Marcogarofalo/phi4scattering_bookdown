@@ -1,5 +1,5 @@
+## E2 (g=0.025)
 
-## E2 CM
 
 
 ```{r , include=FALSE}
@@ -24,7 +24,76 @@
  library(htmltools)
  #library(sigma)
  source('functions.R')
+g<-0.025
 ```
+
+
+
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+TLs<-list(c(32,28) ) 
+g<-0.025
+for (TL in TLs){
+gg<-ggplot()
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("E2_0",all_obs,mt,gg,"yes")
+gg<-add_plot("E2_0_p1",all_obs,mt,gg,"yes")
+gg<-add_plot("E2_0_p11",all_obs,mt,gg,"yes")
+gg<-add_plot("E2_0_p111",all_obs,mt,gg,"yes")
+gg<-add_plot("E2_0_A1",all_obs,mt,gg,"yes")
+fig<-ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+                      yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+print(htmltools::tagList(fig))
+}
+```
+
+
+
+
+
+### residual plot 
+
+```{r, echo=FALSE,results='asis'}
+
+TLs<-list(c(32,28)  )
+gg<-ggplot()
+g<-0.025
+for (TL in TLs){
+T<- TL[1]
+L<- TL[2]
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_res_plot("E2_0",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p1",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p11",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_p111",all_obs,mt,gg,"no")
+gg<-add_res_plot("E2_0_A1",all_obs,mt,gg,"no")
+
+}
+
+ggplotly(gg,dynamicTicks = TRUE)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , range=c(0, 14), autorange = F  ) ,
+                      yaxis = list(title = "$c(t)-\\mbox{fit}$",showexponent = "all", exponentformat = "e", autorange = T  )) 
+
+```
+
+##  E2 CM $g=0.025$
 
 ```{r, echo=FALSE,results='asis'}
 
@@ -32,15 +101,15 @@ count=1
 dfree<- list()
 df<- data.frame("momentum"=c(0),"E2"=c(0),"err"=c(0),"corr"=c(0),"delta"=c(0),"deltaerr"=c(0),  "k"=c(0),"kerr"=c(0),"L"=c(0), "kcotd"=c(0),"kcotderr"=c(0), "T"=c(0))
 
-TLs<-list(c(48,30) ,c(96,30), c(32,24), c(32,28), c(32,30), c(32,32), c(32,36)  )
+TLs<-list( c(32,28) )
 gg<-ggplot()
 iTL=1
 for (TL in TLs){
 T<- TL[1]
 L<- TL[2]
 
-dir<-paste("../out")
-file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
 cat("\n####", file,'\n\n')
 mt<-read_df(file)
 all_obs<-get_all_corr(mt)
@@ -153,149 +222,3 @@ fig
 ```
 
 
-
-### To plot the figure in pdf
-
-```{r, results='asis'}
-library(ggplot2)
-library(Rose)
-count=1
-countfree=1
-
-df<- data.frame("momentum"=c(0),"E2"=c(0),"err"=c(0),"corr"=c(0),"delta"=c(0),"deltaerr"=c(0),  "k"=c(0),"kerr"=c(0),"L"=c(0), "kcotd"=c(0),"kcotderr"=c(0), "T"=c(0))
-dfree<- data.frame("momentum"=c(0),"E2"=c(0),"err"=c(0),"Efreelatt"=c(0), "p"=c(0))
-
-TLs<-list( c(32,32) )
-gg<-ggplot()
-iTL=1
-for (TL in TLs){
-T<- TL[1]
-L<- TL[2]
-
-dir<-paste("../out")
-file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
-cat("\n####", file,'\n\n')
-mt<-read_df(file)
-all_obs<-get_all_corr(mt)
-string=sprintf("\\b%s\\b","E1_0")# need to put the delimiters on the word to grep  
-l<-grep(string,all_obs[,"corr"])
-label<-paste(gsub('\\\\b','',string),"L=",L)
-n<-all_obs[l,"n"]
-fit<- get_fit_n(mt,n)
-m0<-fit[1,1]
-
-momenta<-data.frame(c(0,0,0,0,0,0),c(1,0,0,0,0,0),c(1,1,0,0,0,0),c(1,1,1,0,0,0),c(1,0,0,-1,0,0))
-for (p in momenta){
-  norm= p[1]^2+p[2]^2+p[3]^2
-  norm=norm*(2*pi/L)^2
-  norm1= p[4]^2+p[5]^2+p[6]^2
-  norm1=norm1*(2*pi/L)^2
-  norm_tot= (p[1]+p[4])^2+(p[2]+p[5])^2+(p[3]+p[6])^2
-  norm_tot=norm_tot*(2*pi/L)^2
-  E2=sqrt(m0^2+norm1)+ sqrt(m0^2+norm )
-  E2cm=E2#sqrt(E2^2-norm_tot)
-  s=sprintf("(%d,%d,%d)(%d,%d,%d)",p[1],p[2],p[3],p[4],p[5],p[6])
-  hatp2=4* ( sin(pi*p[1]/L)^2+sin(pi*p[2]/L)^2+sin(pi*p[3]/L)^2   )
-  Efl<-acosh(cosh(m0) + 0.5*hatp2  )
-  hatp2=4* (sin(pi*p[4]/L)^2+sin(pi*p[5]/L)^2+sin(pi*p[6]/L)^2   )
-  Efl<-Efl +acosh(cosh(m0) + 0.5*hatp2  )
-  Efl=Efl#sqrt(Efl^2-norm_tot)
-  dfree[countfree,]<- list(s, E2cm ,  0,  Efl, norm_tot*4 )
-  countfree=countfree+1
-}
-
-
-
-mom=1
-for ( s in c("E2_0")){
-  
-  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
-  l<-grep(string,all_obs[,"corr"])
-  label<-paste(gsub('\\\\b','',string),"L=",L)
-  n<-all_obs[l,"n"]
-  fit<- get_fit_n(mt,n)
-  df[count,]<- list(dfree[1,1],fit[1,1],fit[1,2] ,label,fit[3,5],fit[3,6],
-                    fit[3,7],fit[3,8],
-                    L,
-                    fit[3,9],fit[3,10],T)
-    count=count+1
-}
-for ( s in c("E2_0_p1","E2_0_p11","E2_0_p111")){
-  
-  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
-  l<-grep(string,all_obs[,"corr"])
-  label<-paste(gsub('\\\\b','',string),"L=",L)
-  n<-all_obs[l,"n"]
-  fit<- get_fit_n(mt,n)
-  df[count,]<- list(dfree[mom+1,1],fit[1,1],fit[1,2] ,label,fit[2,5],fit[2,6],
-                    fit[2,7],fit[2,8],
-                    L,
-                    fit[2,9],fit[2,10],T)
-
-  count=count+1
-  mom=mom+1
-}
-
-for ( s in c("E2_0_A1")){
-  
-  string=sprintf("\\b%s\\b",s)# need to put the delimiters on the word to grep  
-  l<-grep(string,all_obs[,"corr"])
-  label<-paste(gsub('\\\\b','',string),"L=",L)
-  n<-all_obs[l,"n"]
-  fit<- get_fit_n(mt,n)
-  df[count,]<- list(dfree[5,1],fit[1,1],fit[1,2] ,label,fit[2,5],fit[2,6],
-                    fit[2,7],fit[2,8],L,
-                    fit[2,9],fit[2,10],T)
-   
-  count=count+1
-}
-
- 
-
-iTL=iTL+1
-
-}
-
-lab1<-"$E_2-E_2^{free,latt}$"
-lab<-"$E_2-E_2^{free,cont}$" 
-n<-"a"
-gg<- gg+scale_color_manual(labels=c(lab,lab1),values=c("red","blue"))
-gg<- gg+scale_shape_manual(labels=c(lab,lab1),values=c(1,2))
-gg<- gg+scale_fill_manual(labels=c(lab,lab1),values=c("red","blue"))
-
- gg<-gg+geom_point(data=df, mapping=aes(x=df$momentum,      y=df$E2-dfree$E2,color=n, shape=n)     )
- gg<-gg+geom_errorbar(data=df, mapping=aes(x=df$momentum,      ymin=df$E2-df$err-dfree$E2,ymax=df$E2+df$err-dfree$E2,color=n, shape=n )  , width = 0.2     )
-###########plot first
- gg<- gg+geom_abline(slope=0, itercept=0, size = 1. )
-
- 
-gg <- gg+ggplot2::theme_bw()+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))+  theme(legend.title = element_blank(),
-                  legend.position = c(0.73,0.81))
-
-gg<- gg+ ggplot2::ylab("$\\Delta E_2$")+ggplot2::xlab("$p_1,p_2$")
-gg<-gg +coord_cartesian(ylim=c(-0.001,0.006))
-fig<-gg
-save_pdf = "Delta_E"
-texfile=paste0(save_pdf,".tex")
-tikzDevice::tikz(texfile,standAlone=TRUE, width = 5/1.618033, height = 5/1.618033)
-plot(fig)
-dev.off()
-tools::texi2dvi(paste0(save_pdf,".tex"),pdf=TRUE)
- 
- # ############## E_latt
- n1<-"b"
-gg<-gg+geom_point(data=df, mapping=aes(x=df$momentum,      y=df$E2-dfree$Efreelatt, color=n1, shape=n1)  , width = 0.2     )
- gg<-gg+geom_errorbar(data=df, mapping=aes(x=df$momentum,      ymin=df$E2-df$err-dfree$Efreelatt,ymax=df$E2+df$err-dfree$Efreelatt, color=n1,shape=n1)  , width = 0.2     )
-
-fig<-gg
-
-save_pdf = "Delta_E_latt"
-texfile=paste0(save_pdf,".tex")
-tikzDevice::tikz(texfile,standAlone=TRUE, width = 5/1.618033, height = 5/1.618033)
-plot(fig)
-dev.off()
-tools::texi2dvi(paste0(save_pdf,".tex"),pdf=TRUE)
- 
- 
-
-```

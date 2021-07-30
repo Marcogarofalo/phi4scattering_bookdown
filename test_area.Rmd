@@ -1,0 +1,83 @@
+# test area
+
+```{r  include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+
+gg<-ggplot()
+T<- 32
+L<- 28
+# dir<-paste("../out")
+# file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+#gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p1",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p11",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
+gg<-add_plot("GEVP_phi0_phi03_phi1_l0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_l1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_l2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+# fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
+#                       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
+# print(htmltools::tagList(fig))
+
+fig<- myplotly(gg,"fit","t", "y" )
+
+
+```
+
+
+
+```{r}
+gg<- ggplot()
+gg<-add_res_plot("E3_0_vev",all_obs,mt,gg,"no")
+fig<- myplotly(gg,"fit","t", "y" )
+
+```
+
+
+```{r}
+gg<- ggplot()
+
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_log_meff_shifted",dir,T,L)
+mt<-read_df(file)
+n<-117
+d<- get_block_n(mt,n)
+fit<- get_fit_n(mt,n)
+fit_range<- get_plateaux_range(mt,n)
+gg<- many_fit_ggplot(d,fit,fit_range,T/2,"no",gg,  label  )
+gg
+```
