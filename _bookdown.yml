@@ -1,5 +1,7 @@
 book_filename: "Rbook"
 delete_merged_file: true
+new_session: true
+before_chapter_script: _common.R
 rmd_files: ["index.Rmd", "E1.Rmd", "E2.Rmd", "E2_CM.Rmd", "E2_plateaux.Rmd",
 "E2_01.Rmd",
 "E3.Rmd" ,"matrix_element.Rmd",
@@ -12,6 +14,7 @@ rmd_files: ["index.Rmd", "E1.Rmd", "E2.Rmd", "E2_CM.Rmd", "E2_plateaux.Rmd",
 "E1_g0.025.Rmd","E2_CM_g0.025.Rmd","E3_g0.025.Rmd",
 "GEVP_g0.025.Rmd",
 "two_particles_g0.025.Rmd","fit_QC3_g0.025.Rmd",
+"smearing.Rmd",
 "references.Rmd"]
 language:
   ui:

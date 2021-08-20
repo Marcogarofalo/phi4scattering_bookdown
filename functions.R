@@ -8,11 +8,18 @@ my_print<-function(label,fit,all_obs,l){
   str2 <- paste(str2,"  $\\chi^2/dof=$",all_obs[l,4])
   cat(str2,'\n\n')
 }
-add_plot<-function(string,all_obs,mt,gg ,log){
+add_plot<-function(string,all_obs,mt,gg ,log,number=NULL){
   string=sprintf("\\b%s\\b",string)# need to put the delimiters on the word to grep  
-  l<-grep(string,all_obs[,"corr"])
   label<-paste0(gsub('\\\\b','',string),"(L",L,"T",T,")")
-  n<-all_obs[l,"n"]
+  if (is.null(number)){
+      l<-grep(string,all_obs[,"corr"])
+      n<-all_obs[l,"n"]
+  }
+  else {
+    n=number
+    l=n
+  }
+  
   d<- get_block_n(mt,n)
   fit<- get_fit_n(mt,n)
   fit_range<- get_plateaux_range(mt,n)

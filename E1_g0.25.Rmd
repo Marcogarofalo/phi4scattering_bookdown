@@ -2,7 +2,7 @@
 
 in tihs section we report the result with $g=0.25$
 
-# E1(g=0.25) 
+## E1(g=0.25) 
 
 
 

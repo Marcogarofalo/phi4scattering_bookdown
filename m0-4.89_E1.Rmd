@@ -1,6 +1,6 @@
-# $m_0=-4.89$
+# \(m_0=-4.89\)
 
-# E1
+## E1
 
 
 
@@ -132,4 +132,20 @@ print(htmltools::tagList(fig))
 #assign("fig", fig, envir=parent.frame())
 }
 
+```
+
+
+
+```{r, include=FALSE}
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
 ```

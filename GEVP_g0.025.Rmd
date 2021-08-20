@@ -24,7 +24,30 @@
  source('functions.R')
 ```
 
-we construct the matrix 
+with the term $g\phi_0^3\phi_1$ we expect the following spectral decomposition  
+$$
+\langle\phi_1(0)\phi_1(t) \rangle  \approx |\langle 0|\phi_1|\phi_1\rangle|^2| \left( e^{-M_1t}+e^{-M_1(T-t)}\right) 
++|\langle 0|\phi_1|\phi_0\rangle|^2 \left( e^{-Mt}+e^{-M(T-t)}\right)\\
++|\langle 0|\phi_1|\phi_0^3\rangle|^2 \left( e^{-E_3t}+e^{-E_3(T-t)}\right)
++|\langle \phi_0|\phi_1|\phi_0^2\rangle|^2 e^{-(M)T} \left( e^{-(E_2-M)t}+e^{-(E_2-M)(T-t)}\right)\,.
+$$
+
+Together with the previous correlator we have $\langle\phi_0(0)\phi_0(t) \rangle$ and $\langle\phi_0^3(0)\phi_0^3(t) \rangle$ which interpolates the same states. However the relevant states should be
+
+$$
+\langle\phi_0(0)\phi_0(t) \rangle \approx |A_{\phi_0\to\phi_0}| \left( e^{-Mt}+e^{-M(T-t)}\right)
+$$
+
+and the other should be suppressed. While
+
+$$
+\langle\phi_0^3(0)\phi_0^3(t) \rangle \approx |A_{\phi_0^3\to\phi_0^3}|  \left( e^{-E_3t}+e^{-E_3(T-t)}\right)+ 
+|A_{\phi_0\to\phi_0}| \left( e^{-Mt}+e^{-M(T-t)}\right)\\
++|A_{\phi_0\to\phi_0^2}| e^{-(M)T} \left( e^{-(E_2-M)t}+e^{-(E_2-M)(T-t)}\right)\,.
+$$
+
+
+We construct the matrix 
 
 $$
 C(t)=\begin{pmatrix}
@@ -33,12 +56,13 @@ C(t)=\begin{pmatrix}
  & &\langle\phi_1(0)\phi_1(t) \rangle  
 \end{pmatrix}
 $$
-we do not wtrite the lower triangular part of the matrix since $C$ is hermitian so
-$C_{ij}=C_{ji}^*$. We solve the GEVP
+the matrix since $C$ is hermitiian  so the lower triangular non-written part can be computed as $C_{ij}=C_{ji}^*$.
+
+We solve the GEVP
 $$
   C(t)v_n(t,t_0)=\lambda_n(t,t_0)C(t_0) v_n(t,t_n)
 $$
-and we get $\lambda_n(t,t_0)$ which we fit as
+We fit $\lambda_n(t,t_0)$ as
 $$
 \lambda_n(t,t_0)=C \left(e^{ - E_n  (t-t_0)}  + e^{ - E_n  ((T - t)-t_0)}\right)
 $$
@@ -46,10 +70,52 @@ $$
 ```{r, echo=FALSE,results='asis'}
 
 
-
 gg<-ggplot()
 T<- 32
 L<- 28
+# dir<-paste("../out")
+# file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+file_meff=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_meff_correlators",dir,T,L)
+
+mt_meff<-read_df(file_meff)
+all_obs_meff<- get_all_corr(mt_meff)
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+#gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p1",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p11",all_obs,mt,gg,"yes")
+#gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
+
+# gg<-add_plot("GEVP_phi0_phi03_phi1_l0",all_obs,mt,gg,"yes")
+# gg<-add_plot("GEVP_phi0_phi03_phi1_l1",all_obs,mt,gg,"yes")
+# gg<-add_plot("GEVP_phi0_phi03_phi1_l2",all_obs,mt,gg,"yes")
+
+ gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+ gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+ gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+ gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+ gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+ gg<-add_plot("E3_0",all_obs_meff,mt_meff,gg,"no",6)
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
+
+
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+gg<-ggplot()
+T<- 32
+L<- 30
 # dir<-paste("../out")
 # file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
 dir<-paste("../../g0.025/out")
@@ -69,11 +135,28 @@ gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
 gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
 gg<-add_plot("E1_0",all_obs,mt,gg,"no")
 gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+
 # fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
 #                       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
 # print(htmltools::tagList(fig))
 
-fig<- myplotly(gg,"fit","t", "y" )
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
 
 
+```
+
+
+```{r, include=FALSE}
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
 ```
