@@ -1,0 +1,155 @@
+# E2 connected {#E2connected}
+
+
+
+```{r , include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+
+We define the generator of the correlation function as 
+$$
+  Z[J_0,J_1]=N\int D\phi_0D\phi_1 e^{-S+\int J_0\phi_0+\int J_1\phi_1} \,.
+$$
+with $N=1/Z[0,0]$ such that $Z[0,0]=1$.
+the correlation function acting with derivativesrespect to $J$ and then setting it to zero, for example
+$$
+\langle \phi_0(x)^2 \phi_0(y)^2\rangle=
+\frac{\partial^2}{\partial^2 J_0(x)}\frac{\partial^2}{\partial^2 J_0(y)}Z[J_0,J_1]\bigg|_{J_0=J_1=0}\,.
+$$
+We can define the connected correlation function deriving logarithm of $Z$ i.e.
+$$
+\langle \phi_0(x)^2 \phi_0(y)^2\rangle_c=
+\frac{\partial^2}{\partial^2 J_0(x)}\frac{\partial^2}{\partial^2 J_0(y)}\log Z[J_0,J_1]\bigg|_{J_0=J_1=0}\\
+=\langle \phi_0(x)^2 \phi_0(y)^2\rangle-\langle \phi_0(x) \phi_0(y)\rangle^2
+-\langle \phi_0(x)^2\rangle\langle \phi_0(y)^2\rangle
+$$
+we use the fact that $\langle \phi (x)\rangle=0$.
+
+
+Below we plot the effective mass computed from 
+
+- $\langle \phi_0(x)^2 \phi_0(y)^2\rangle$
+- $\langle \phi_0(x)^2 \phi_0(y)^2\rangle-\langle \phi_0(x) \phi_0(y)\rangle^2$
+- $\langle \phi_0(x) \phi_0(y)\rangle^2$
+
+In all cases we remove the constant $\langle \phi_0(x)^2\rangle$ term shifting the correlator.
+
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+
+
+gg<-ggplot()
+T<- 32
+L<- 24
+ dir<-paste("../out")
+ file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+ 
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+ gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+ gg<-add_plot("E2_0_con",all_obs,mt,gg,"no")
+ gg<-add_plot("E1_0_sq",all_obs,mt,gg,"no")
+ gg1<-ggplot()
+ gg1<-add_plot("E1_0",all_obs,mt,gg1,"no")
+
+fig<- myplotly(gg,"fit","t","$m_{eff}$"  )
+
+
+```
+
+
+### FT $\phi^2$
+
+Below we add to the plot the FT of the operator $\phi(x)^2$ difined as
+
+$$
+  \widetilde{\phi(t,p)^2}=\sum_{\vec x}\phi(t,\vec x)^2 e^{i\vec{p}\cdot\vec{x}}
+$$
+we call its effective mass E2_0_p0
+
+```{r, echo=FALSE,results='asis'}
+
+
+gg<-ggplot()
+T<- 64
+L<- 28
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+ 
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+ gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+ gg<-add_plot("E2_0_con",all_obs,mt,gg,"no")
+ gg<-add_plot("E1_0_sq",all_obs,mt,gg,"no")
+gg<-add_plot("E2_0_p0",all_obs,mt,gg,"no")
+
+ gg1<-ggplot()
+ gg1<-add_plot("E1_0",all_obs,mt,gg1,"no")
+
+fig<- myplotly(gg,"fit","t","$m_{eff}$" ,yrange=c(0,2) )
+
+
+```
+
+
+### Test ensemble
+
+
+```{r, echo=FALSE,results='asis' ,dev='tikz'}
+library(Rose)
+gg<-ggplot()
+T<- 16
+L<- 8
+ dir<-paste("/home/marco/programs/Z2-phi4/build/main/data/out")
+ file=sprintf("%s/G2t_T%d_L%d_msq0-4.850000_msq1-4.850000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+ 
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+
+ gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+ gg<-add_plot("E2_0_con",all_obs,mt,gg,"no")
+ gg<-add_plot("E1_0_sq",all_obs,mt,gg,"no")
+ gg<-add_plot("E2_0_p0",all_obs,mt,gg,"no")
+ gg1<-ggplot()
+ gg1<-add_plot("E1_0",all_obs,mt,gg1,"no")
+
+fig<- myplotly(gg,"fit","t","$m_{eff}$"  )
+#fig<- myplotly(gg,"fit","t", "y", width=900, yrange = c(-3,5) )
+
+```

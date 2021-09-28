@@ -1,4 +1,4 @@
-# GEVP g0.025 
+# GEVP g0.025 {#GEVPg0_025}
 
 ```{r  include=FALSE}
  knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
@@ -67,6 +67,20 @@ $$
 \lambda_n(t,t_0)=C \left(e^{ - E_n  (t-t_0)}  + e^{ - E_n  ((T - t)-t_0)}\right)
 $$
 
+We also consider the case where we add an other operato to the GEVP
+
+We construct the matrix 
+
+$$
+C(t)=\begin{pmatrix}
+\langle\phi_0(0)\phi_0(t) \rangle  & \langle\phi_0^3(0)\phi_0(t)  & \langle\phi_0(0)\phi_1(t) \rangle   \rangle &\langle\phi_0(0) O_{A1}(t) \rangle \\
+ & \langle\phi_0^3(0)\phi_0^3(t) \rangle  & \langle\phi_0^3(0)\phi_1(t) \rangle  &\langle\phi_0^3(0) O_{A1}(t) \rangle\\
+ & &\langle\phi_1(0)\phi_1(t) \rangle  &\langle\phi_1(0) O_{A1}(t) \rangle \\
+&& &\langle O_{A1} (0) O_{A1}(t) \rangle
+\end{pmatrix}
+$$
+
+
 ```{r, echo=FALSE,results='asis'}
 
 
@@ -101,9 +115,350 @@ all_obs<- get_all_corr(mt)
  gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
  gg<-add_plot("E1_0",all_obs,mt,gg,"no")
  gg<-add_plot("E1_1",all_obs,mt,gg,"no")
- gg<-add_plot("E3_0",all_obs_meff,mt_meff,gg,"no",6)
+ gg1<-add_plot("E3_0",all_obs_meff,mt_meff,gg,"no",6)
 
-fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE, width = 900 )
+
+
+```
+
+
+```{r, echo=FALSE,results='asis'}
+df<-data.frame("L"=c(0),"T"=c(0),"E3"=c(0),"E3err"=c(0),"E1"=c(0),"E1err"=c(0),
+               "E3p1"=c(0),"E3p1err"=c(0),"E1p1"=c(0),"E1p1err"=c(0))
+gg<-ggplot()
+T<- 64
+L<- 24
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+T<- 128
+L<- 24
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+```{r, echo=FALSE,results='asis'}
+
+df<-df[-1,] 
+gg<-ggplot()
+T<- 64
+L<- 28
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+```
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 32
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 36
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 40
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+
+
+```{r}
+gg<-ggplot()
+gg<- gg+ geom_point(data=df,mapping=aes(x=L, y=E3, color="$3\\phi_0$"))
+gg<- gg+ geom_errorbar(data=df,mapping=aes(x=L, ymin=E3-E3err, ymax=E3+E3err, color="$3\\phi_0$"), width=0.3)
+gg<- gg+ geom_point(data=df,mapping=aes(x=L, y=E1, color="$\\phi_1$"))
+gg<- gg+ geom_errorbar(data=df,mapping=aes(x=L, ymin=E1-E1err, ymax=E1+E1err, color="$\\phi_1$"), width=0.3)
+myplotly(gg,"","L","E(p=(0,0,0))",to_print=FALSE)
+```
+
+
+## P=(1,0,0)
+
+When the total momentum is $\vec p=(1,0,0)$ the possible states are
+
+$$
+|A_{0-\phi_1}|^2 \left( e^{-E_{\phi_1}t}+e^{-E_{\phi_1}(T-t)}\right) 
++|A_{0-\phi_0}|^2 \left( e^{-E_{\phi_0}t}+e^{-E_{\phi_0}(T-t)}\right)\\
++|A_{0-3\phi_0}|^2 \left( e^{-E_{3\phi_0}t}+e^{-E_{3\phi_0}(T-t)}\right)\\
++|A_{\phi_0-2\phi_0(p)}|^2 e^{-E_{\phi_0}T} \left( e^{-(E_{2\phi_0}(p)-E_{\phi_0})t}+e^{-(E_{2\phi_0}(p)-E_{\phi_0})(T-t)}\right)\\
++|A_{\phi_0(p)-2\phi_0}|^2 e^{-E_{\phi_0}(p)T} \left( e^{-(E_{2\phi_0}-E_{\phi_0}(p))t}+e^{-(E_{2\phi_0}-E_{\phi_0}(p))(T-t)}\right)\,.
+$$
+In particular the last term has an effective mass of $E_{2\phi_0}-E_{\phi_0}(p)<E_{\phi_0}$
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 24
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl3",all_obs,mt,gg,"no")
+
+#gg<-add_plot("E2_0_p1_ws",all_obs,mt,gg,"no")
+#gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+
+```
+
+```{r, echo=FALSE,results='asis'}
+
+
+gg<-ggplot()
+T<- 64
+L<- 28
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("E2_0_p1_ws",all_obs,mt,gg,"no")
+#gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
 
 
 ```
@@ -114,10 +469,8 @@ fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
 
 
 gg<-ggplot()
-T<- 32
-L<- 30
-# dir<-paste("../out")
-# file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+T<- 64
+L<- 32
 dir<-paste("../../g0.025/out")
 file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
 
@@ -126,24 +479,108 @@ cat("\n####",file,'\n\n')
 mt<-read_df(file)
 all_obs<- get_all_corr(mt)
 
-#gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
-#gg<-add_plot("E3_0_p1",all_obs,mt,gg,"yes")
-#gg<-add_plot("E3_0_p11",all_obs,mt,gg,"yes")
-#gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
-gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
-gg<-add_plot("E1_0",all_obs,mt,gg,"no")
-gg<-add_plot("E1_1",all_obs,mt,gg,"no")
-gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
 
-# fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
-#                       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
-# print(htmltools::tagList(fig))
-
-fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
 
 
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 40
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_p1_meffl3",all_obs,mt,gg,"no")
+
+#gg<-add_plot("E2_0_p1_ws",all_obs,mt,gg,"no")
+#gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 128
+L<- 24
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl3",all_obs,mt,gg,"no")
+
+######
+file_meff=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_meff_correlators",dir,T,L)
+#cat("\n####",file_meff,'\n\n')
+mt_meff<-read_df(file_meff)
+all_obs_meff<- get_all_corr(mt_meff)
+gg<-add_plot("E3_0_p1_meff",all_obs_meff,mt_meff,gg,"no",number=96)
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+
+```
+
+
+
+```{r}
+gg<-ggplot()
+df$E3p1cm<- sqrt(df$E3p1^2-(2*pi/df$L)^2)
+df$E3p1cmerr<- 2*df$E3p1*df$E3p1err/ sqrt(df$E3p1^2-(2*pi/df$L)^2)
+
+df$E1p1cm<- sqrt(df$E1p1^2-(2*pi/df$L)^2)
+df$E1p1cmerr<- 2*df$E1p1*df$E1p1err/ sqrt(df$E1p1^2-(2*pi/df$L)^2)
+
+
+gg<- gg+ geom_point(data=df,mapping=aes(x=L, y=E3p1cm, color="$3\\phi_0$"))
+gg<- gg+ geom_errorbar(data=df,mapping=aes(x=L, ymin=E3p1cm-E3p1cmerr, ymax=E3p1cm+E3p1cmerr, color="$3\\phi_0$"), width=0.3)
+gg<- gg+ geom_point(data=df,mapping=aes(x=L, y=E1p1cm, color="$\\phi_1$"))
+gg<- gg+ geom_errorbar(data=df,mapping=aes(x=L, ymin=E1p1cm-E1p1cmerr, ymax=E1p1cm+E1p1cmerr, color="$\\phi_1$"), width=0.3)
+myplotly(gg,"","L","E_{CM}(p=(1,0,0))",to_print=FALSE)
 ```
 
 

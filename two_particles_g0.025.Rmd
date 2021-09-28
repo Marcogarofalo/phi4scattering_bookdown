@@ -1,5 +1,5 @@
 
-# Fit 2 particle quantization (g=0.025)
+# Fit 2 particle quantization (g=0.025) {#QC2g0_025}
 
 
 ```{r , include=FALSE}

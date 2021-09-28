@@ -1,4 +1,4 @@
-# g=0.25
+# g=0.25  {#g0_25}
 
 in tihs section we report the result with $g=0.25$
 

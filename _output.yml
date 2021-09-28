@@ -3,6 +3,7 @@ bookdown::gitbook:
   split_by: section
   config:
     toc:
+      collapse: section
       before: |
         <li><a href="./"> Book </a></li>
       after: |
@@ -10,10 +11,10 @@ bookdown::gitbook:
     download: ["pdf", "epub"]
 bookdown::bs4_book:
   css: style.css
-  split_by: section
   theme:
     primary: "#096B72"
-  repo: https://github.com/rstudio/bookdown-demo
+  repo: https://github.com/Marcogarofalo/phi4scattering_bookdown.git
+  split_by: section
 bookdown::pdf_book:
   includes:
     in_header: preamble.tex

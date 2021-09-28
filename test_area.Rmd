@@ -3,61 +3,87 @@
 
 
 ```{r, echo=FALSE,results='asis'}
-
-
+library(ggplot2)
+library(Rose)
 
 gg<-ggplot()
-T<- 32
-L<- 24
- dir<-paste("../out")
- file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
- 
-T<- 32
+T<- 64
 L<- 28
+# dir<-paste("../out")
+# 
 dir<-paste("../../g0.025/out")
-file1=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
 
 cat("\n####",file,'\n\n')
 
 mt<-read_df(file)
 all_obs<- get_all_corr(mt)
 
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
+##############################
+file1=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_meff_correlators",dir,T,L)
+
+cat("\n####",file1,'\n\n')
 
 mt1<-read_df(file1)
 all_obs1<- get_all_corr(mt1)
+gg1 <- ggplot()
+gg1<-add_plot("E1_0",all_obs1,mt1,gg1,"no",number=1)
+gg1<-add_plot("E1_1",all_obs1,mt1,gg1,"no",number=2)
 
-
-#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
-#gg<-add_plot("E1_1",all_obs,mt,gg,"no")
-#gg<-add_plot("fun_l1_GEVP",all_obs,mt,gg,"no")
-#gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
-#gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l0",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l1",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l2",all_obs,mt,gg,"no")
-
-
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
-# gg<-add_plot("fun_l1_GEVP",all_obs,mt,gg,"no")
-# gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
-
- gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs1,mt1,gg,"no")
- gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs1,mt1,gg,"no")
- gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs1,mt1,gg,"no")
- gg<-add_plot("E1_0",all_obs1,mt1,gg,"no")
- gg<-add_plot("E1_1",all_obs1,mt1,gg,"no")
-
-# fig<-ggplotly(gg)%>% layout(title="fit" ,xaxis = list(title = "$t$",showexponent = "all", exponentformat = "e" , autorange = T  ) ,
-#                       yaxis = list(title = "$\\log c(t)$",showexponent = "all", exponentformat = "e", autorange = T  ))  
-# print(htmltools::tagList(fig))
-
-fig<- myplotly(gg,"fit","t", "y" , width=1000 )
-
+fig<- myplotly(gg1,"fit","t", "y", to_print=TRUE )
 
 ```
 
+
+
+### g=0
+
+```{r, echo=FALSE,results='asis'}
+
+
+gg<-ggplot()
+T<- 64
+L<- 28
+# dir<-paste("../out")
+# 
+dir<-paste("../../momentum/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE )
+##############################
+file1=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_meff_correlators",dir,T,L)
+
+cat("\n####",file1,'\n\n')
+
+mt1<-read_df(file1)
+all_obs1<- get_all_corr(mt1)
+gg1 <- ggplot()
+gg1<-add_plot("E1_0",all_obs1,mt1,gg1,"no",number=1)
+gg1<-add_plot("E1_1",all_obs1,mt1,gg1,"no",number=2)
+
+fig<- myplotly(gg1,"fit","t", "y", to_print=TRUE )
+
+```
 
 ```{r, echo=FALSE, eval=FALSE}
 cor<- c()
@@ -142,6 +168,33 @@ fig<- myplotly(gg,"fit","t", "y", width=900, yrange = c(-3,5) )
 
 
 
+```{r, echo=FALSE,results='asis' ,dev='tikz'}
+library(ggplot2)
+library(Rose)
+library(plotly)
+gg<-ggplot()
+T<- 32
+L<- 30
+ dir<-paste("../out")
+ file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+ 
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+
+
+#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+#gg<-add_plot("sE1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1",all_obs,mt,gg,"no")
+
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+
+fig<- myplotly(gg,"fit","t", "y", width=900)
+
+
+```
 
 
 

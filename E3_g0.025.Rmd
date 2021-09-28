@@ -1,4 +1,4 @@
-## E3 (g=0.025)
+## E3 (g=0.025) {#E3g0_025}
 
 
 ```{r  include=FALSE}
@@ -31,7 +31,7 @@
 ```{r, echo=FALSE,results='asis'}
 
 
-TLs<-list(c(32,28) ) 
+TLs<-list(c(32,28), c(32,30) ) 
 g<-0.025
 for (TL in TLs){
 gg<-ggplot()

@@ -10,12 +10,12 @@ library(knitr)
 
 #knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_chunk$set(fig.align='center',       comment='')
-knitr::opts_chunk$set(fig.width=8, fig.height=6) 
+#knitr::opts_chunk$set(fig.width=8, fig.height=6) 
 require(ggplot2)
 require(scales) # to access break formatting functions
 library(latex2exp)
 library(pander)
-panderOptions('knitr.auto.asis', FALSE)
+#panderOptions('knitr.auto.asis', FALSE)
 library(plotly)
 library(reticulate)
 #use_python("/home/marco/Programs/Anaconda3/bin/python")
@@ -85,7 +85,7 @@ return(fig)
 }
 ```
 
-minimising the $\chi^2$
+minimizing the $\chi^2$
 $$
 \chi^2 =\sum_i  \frac{(E_3^{predicted} -E_3^{measured} )}{\sigma^2}
 $$

@@ -8,7 +8,7 @@ library(knitr)
 
 #knitr::opts_chunk$set(echo = TRUE)
 #knitr::opts_chunk$set(fig.align='center',       comment='')
-knitr::opts_chunk$set(fig.width=8, fig.height=5) 
+#knitr::opts_chunk$set(fig.width=8, fig.height=5) 
 require(ggplot2)
 require(scales) # to access break formatting functions
 library(latex2exp)

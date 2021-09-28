@@ -1,0 +1,351 @@
+# $E_{\phi_1}$ vs $E_{3\phi_0}$  {#E1_vs_E3}
+
+
+
+```{r , include=FALSE}
+library(knitr)
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+
+#knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(fig.align='center',       comment='')
+#knitr::opts_chunk$set(fig.width=8, fig.height=6) 
+require(ggplot2)
+require(scales) # to access break formatting functions
+library(latex2exp)
+library(pander)
+#panderOptions('knitr.auto.asis', FALSE)
+library(plotly)
+library(reticulate)
+#use_python("/home/marco/Programs/Anaconda3/bin/python")
+
+# library(knitrengines) # github.com/hrbrmstr/knitrengines
+library(dplyr)
+library(Rose)
+library(ggrepel)
+
+
+mom_lab<-function(vec){
+  count=1
+  r<- c()
+  for(v in vec){
+    if(v==0)
+      r[count]="(0,0,0)"
+    else if(v==1)
+      r[count]="(1,0,0)"
+    else if(v==2)
+      r[count]="(1,1,0)"
+    else if(v==3)
+      r[count]="(1-1,0,0)"
+    else if(v==4)
+      r[count]="(1,1,1)"
+    else
+      r[count]="boh"
+    count=count+1
+  }
+  return(r)
+}
+``` 
+
+
+
+```{r, include=FALSE}
+library(ggplot2)
+library(plotly)
+df <- data.frame(x = 1:5, y = 1:5)    
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knitr handle the rendering naturally
+```
+
+
+
+
+```{r, echo=FALSE}
+file=sprintf("../fit_out/QC3_N1_latt_1par_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE)
+names(df) <- c("$L$","$E_3/m$","err", "$T$","$q2$")
+df<- df[c("$T$","$L$","$E_3/m$","err" ,"$q2$")] 
+kable(df[,-5],digit=20)
+```
+
+```{r, echo=FALSE}
+file=sprintf("../fit_out/M0_finite_vol_fit_out_L.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err"))
+m0=df_fit$M0L[length(df_fit[,1])]
+
+dfree= list()
+countfree=1
+momenta<-list(c(0,0,0,0,0,0,0,0,0),c(1,0,0,0,0,0,0,0,0),c(1,1,0,0,0,0,0,0,0),c(1,0,0,-1,0,0,0,0,0), c(1,1,1,0,0,0,0,0,0))
+for (p in momenta){
+  myL<-c()
+  myk<-c()
+  E3_m<-c()
+  for (L in c(23:40)){
+    norm= p[1]^2+p[2]^2+p[3]^2
+    norm=norm*(2*pi/L)^2
+    norm1= p[4]^2+p[5]^2+p[6]^2
+    norm1=norm1*(2*pi/L)^2
+    norm2= p[7]^2+p[8]^2+p[9]^2
+    norm2=norm2*(2*pi/L)^2
+    norm_tot= (p[1]+p[4]+p[7])^2+(p[2]+p[5]+p[8])^2+(p[3]+p[6]+p[9])^2
+    norm_tot=norm_tot*(2*pi/L)^2
+    E2=sqrt(m0^2+norm1)+ sqrt(m0^2+norm )+ sqrt(m0^2+norm2 )
+    E2cm=sqrt(E2^2-norm_tot)
+    k=sqrt(E2cm^2/4. -m0^2)
+    s=sprintf("(%d,%d,%d)(%d,%d,%d)",p[1],p[2],p[3],p[4],p[5],p[6])
+    myL<-c(myL,L)
+    myk<-c(myk,k)
+    E3_m<-c(E3_m,E2/m0)
+  }
+  dfree[[countfree]]<-data.frame("L"=myL,"k"=myk,"E3_m"=E3_m)
+  countfree=countfree+1
+}
+```
+
+
+### p=(0,0,0)
+
+```{r, echo=FALSE, results='asis'}
+#M1
+file=sprintf("../fit_out/M1_finite_vol_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M1_finite_vol_fit_out_L.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err"))
+#M0
+file=sprintf("../fit_out/M0_finite_vol_fit_data.txt")
+df0<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M0_finite_vol_fit_out_L.txt")
+df_fit0<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err"))
+m0=df_fit0$M0L[length(df_fit[,1])]
+
+gg<- ggplot()
+gg<-gg+ geom_point(data=df, mapping=aes(x=L , y=M1L/m0,
+      color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$") )
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),
+                       ,width=0.2)
+gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),alpha=0.2)
+#gg<-gg + geom_text_repel(data=df, mapping=aes(x=L,  y=M1L, label=T))
+
+#+ggplot2::coord_cartesian(xlim=c(20,45), ylim=c(0.1275,0.130 ))
+#m0=df_fit$M0L[length(df_fit[,1])]
+
+##################
+basename="../fit_out/QC3_N1_latt_1par"
+N=1
+file=sprintf("%s_fit_data.txt",basename)
+df<- read.table(file, header=FALSE, fill=TRUE)
+label<-paste("$E_3$")
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,1] , y=df[,2],
+ color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$") ,width=0.001)+labs(color = "momuntum")
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,1] , ymin=df[,2]-df[,3],
+             ymax=df[,2]+df[,3],
+             color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$") ,width=0.001)
+
+df[,6]<-mom_lab(df[,6])
+datalist = list()
+for (n in c(1:N)){
+  
+file=sprintf("%s_fit_out_n%d_L.txt",basename,n-1)
+datalist[[n]]<- read.table(file, header=FALSE, fill=TRUE,   
+                 col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+
+gg<-gg + geom_ribbon(data=datalist[[n]], mapping=aes(x=datalist[[n]][,1] , ymin=datalist[[n]][,2]-datalist[[n]][,3], ymax=datalist[[n]][,2]+datalist[[n]][,3] ,
+      color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$"), alpha=0.5)
+#gg<-gg + geom_line(data=datalist[[n]], mapping=aes_string(x=datalist[[n]][,1] , y=datalist[[n]][,2] , shape=as.factor("$\\mbox{fit }E_3$") ),color="red" )
+
+#free 3 particle
+#gg<-gg + geom_line(data=dfree[[n]], mapping=aes(x=L , y=E3_m , shape=as.factor("free")),color="red" )
+
+
+}
+
+fig<-myplotly(gg, "", "L","$E/m$", to_print=TRUE, xrange=c(20,40))
+
+```
+
+
+
+
+###  p=(1,0,0)
+
+```{r, echo=FALSE, results='asis'}
+#M1
+file=sprintf("../fit_out/M1_finite_vol_fit_data.txt")
+df<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M1_finite_vol_fit_out_L.txt")
+df_fit<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err"))
+
+#M1 p1
+file=sprintf("../fit_out/M1_p1_finite_vol_fit_data.txt")
+dfp1<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M1_p1_finite_vol_fit_out_L.txt")
+df_fitp1<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M1L","M1L_err"))
+
+#M0
+file=sprintf("../fit_out/M0_finite_vol_fit_data.txt")
+df0<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err", "T","k","n", "boh"))
+file=sprintf("../fit_out/M0_finite_vol_fit_out_L.txt")
+df_fit0<- read.table(file, header=FALSE, fill=TRUE,col.names = c("L","M0L","M0L_err"))
+m0=df_fit0$M0L[length(df_fit[,1])]
+
+gg<- ggplot()
+# gg<-gg+ geom_point(data=df, mapping=aes(x=L , y=M1L/m0,
+#       color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$") )
+# gg<-gg + geom_errorbar(data=df, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),
+#                        ,width=0.2)
+# gg<-gg + geom_ribbon(data=df_fit, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),alpha=0.2)
+
+#
+gg<-gg+ geom_point(data=dfp1, mapping=aes(x=L , y=M1L/m0,
+      color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$") )
+gg<-gg + geom_errorbar(data=dfp1, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),
+                       ,width=0.2)
+#gg<-gg + geom_ribbon(data=df_fitp1, mapping=aes(x=L , ymin=(M1L-M1L_err)/m0, ymax=(M1L+M1L_err)/m0,color="$\\phi_1$",fill="$\\phi_1$",shape="$\\phi_1$"),alpha=0.2)
+
+
+#gg<-gg + geom_text_repel(data=df, mapping=aes(x=L,  y=M1L, label=T))
+
+#+ggplot2::coord_cartesian(xlim=c(20,45), ylim=c(0.1275,0.130 ))
+#m0=df_fit$M0L[length(df_fit[,1])]
+
+##################
+basename="../fit_out/QC3_N2_latt_1par"
+N=2
+file=sprintf("%s_fit_data.txt",basename)
+df<- read.table(file, header=FALSE, fill=TRUE)
+label<-paste("$E_3$")
+gg<-gg+  geom_point(data=df, mapping=aes(x=df[,1] , y=df[,2],
+ color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$") ,width=0.001)+labs(color = "momuntum")
+gg<-gg + geom_errorbar(data=df, mapping=aes(x=df[,1] , ymin=df[,2]-df[,3],
+             ymax=df[,2]+df[,3],
+             color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$") ,width=0.001)
+
+df[,6]<-mom_lab(df[,6])
+datalist = list()
+for (n in c(1:N)){
+  
+file=sprintf("%s_fit_out_n%d_L.txt",basename,n-1)
+datalist[[n]]<- read.table(file, header=FALSE, fill=TRUE,   
+                 col.names=c(paste0("x",n),paste0("fit",n),paste0("fiterr",n)))
+
+gg<-gg + geom_ribbon(data=datalist[[n]], mapping=aes(x=datalist[[n]][,1] , ymin=datalist[[n]][,2]-datalist[[n]][,3], ymax=datalist[[n]][,2]+datalist[[n]][,3] ,
+      color="$3\\phi_0$",fill="$3\\phi_0$",shape="$3\\phi_0$"), alpha=0.5)
+#gg<-gg + geom_line(data=datalist[[n]], mapping=aes_string(x=datalist[[n]][,1] , y=datalist[[n]][,2] , shape=as.factor("$\\mbox{fit }E_3$") ),color="red" )
+
+#free 3 particle
+#gg<-gg + geom_line(data=dfree[[n]], mapping=aes(x=L , y=E3_m , shape=as.factor("free")),color="red" )
+
+
+}
+
+fig<-myplotly(gg, "", "L","$E/m$", to_print=TRUE, xrange=c(20,40), yrange=c(3.5,5))
+
+```
+
+
+
+
+
+
+
+```{r, echo=FALSE,results='asis'}
+library(ggplot2)
+library(Rose)
+df<-data.frame("L"=c(0),"T"=c(0),"g"=c(0), "E3"=c(0),"E3err"=c(0),"E1"=c(0),"E1err"=c(0),
+               "E3p1"=c(0),"E3p1err"=c(0),"E1p1"=c(0),"E1p1err"=c(0),
+               "m0"=c(0), "m0err"=c(0)
+               )
+df<-df[-1,]
+gg<-ggplot()
+
+LTs<-list(c(64,24), c(64,26), c(64,28), c(64,30), c(64,32), c(64,36), c(64,40),
+          c(128,24), c(128,28), c(128,30), c(128,32), c(128,36), c(128,40),
+          c(32,24), c(32,28), c(32,30), c(32,32), c(32,36), c(32,40)          
+          )
+#LTs<-list(c(64,28))
+gs<- list(0.000, 0.025, 0.100)
+
+for (g in gs){
+for (LT in LTs){
+  T<- LT[1]
+  L<- LT[2]
+  
+  if ( g==0 )     gdir<-paste("momentum")
+  if ( g==0.1 )   gdir<-paste("g0.1")
+  if ( g==0.025 ) gdir<-paste("g0.025")
+  
+  dir<-paste0("../../",gdir,"/out")
+  file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g%.6f_rep0_output",dir,T,L,g)
+  if (g==0 && LT==c(64,28)) next;
+  if (g==0.025 && T==32) next;
+  
+  if(file.exists(file)){
+    #cat("### ",file,"\n\n")
+    mt<-read_df(file)
+    all_obs<- get_all_corr(mt)
+    
+    m0<-get_energy("E1_0",all_obs,mt)
+    
+    
+    E3<-get_energy("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt)
+    if(is.na(E3[1])  ) E3<-get_energy("E3_0_vev",all_obs,mt)
+      
+    E1<-get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)
+    if(is.na(E1[1]) ) E1<-get_energy("E1_1",all_obs,mt)
+
+    E3p1<-get_energy("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt)
+    if(is.na(E3p1[1]) ) E3p1<-get_energy("E3_0_p1_vev",all_obs,mt)
+    E1p1<-get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)
+    if(is.na(E1p1[1])) E1p1<-get_energy("E1_1_px",all_obs,mt)
+    #gg<-ggplot()
+    #gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+    #myplotly(gg,to_print = TRUE)
+    
+    df[length(df[,1])+1,]<-list(L,T,g,
+                              E3[1], E3[2],
+                              E1[1], E1[2],
+                              E3p1[1], E3p1[2],
+                              E1p1[1], E1p1[2],
+                              m0[1], m0[2]
+                              )
+ }
+}
+}
+df_table<- df[, c(-5,-7,-9,-11,-13)]
+df_table[,4]<-mean_print(df[,4],df[,5])
+df_table[,5]<-mean_print(df[,6],df[,7])
+df_table[,6]<-mean_print(df[,8],df[,9])
+df_table[,7]<-mean_print(df[,10],df[,11])
+df_table[,8]<-mean_print(df[,12],df[,13])
+kable(df_table)
+```
+
+
+```{r}
+dfp<-df
+gg<-ggplot()
+gg<- gg+ geom_point(data=dfp,mapping=aes(x=L*m0, y=E3/m0, color=as.factor(g), label=T )  )
+gg<- gg+ geom_errorbar(data=dfp,mapping=aes(x=L*m0, ymin=(E3-E3err)/m0, ymax=(E3+E3err)/m0, color=as.factor(g), label=T ), width=0.05)
+###gg<- geom_error(gg, x=df$L, y=df$E3, dy=df$E3err, color=as.factor(df$g), shaper=as.factor(df$g))
+gg<- gg+ geom_point(data=dfp,mapping=aes(x=L*m0, y=E1/m0, color=as.factor(g),label=T ))
+gg<- gg+ geom_errorbar(data=dfp,mapping=aes(x=L*m0, ymin=(E1-E1err)/m0, ymax=(E1+E1err)/m0, color=as.factor(g),label=T), width=0.05)
+#gg<- geom_error(gg, x=df$L, y=df$E1, dy=df$E1err, color=as.factor(df$g), shaper=as.factor(df$g) )
+myplotly(gg,"","Lm","E(p=(0,0,0))/m",to_print=FALSE)
+```
+```{r}
+dfp<-df
+
+gg<-ggplot()
+gg<- gg+ geom_point(data=dfp,mapping=aes(x=L*m0, y=E3p1/m0, color=as.factor(g), label=T )  )
+gg<- gg+ geom_errorbar(data=dfp,mapping=aes(x=L*m0, ymin=(E3p1-E3p1err)/m0, ymax=(E3p1+E3p1err)/m0, color=as.factor(g), label=T ), width=0.05)
+###gg<- geom_error(gg, x=df$L, y=df$E3, dy=df$E3err, color=as.factor(df$g), shaper=as.factor(df$g))
+gg<- gg+ geom_point(data=dfp,mapping=aes(x=L*m0, y=E1p1/m0, color=as.factor(g),label=T ))
+gg<- gg+ geom_errorbar(data=dfp,mapping=aes(x=L*m0, ymin=(E1p1-E1p1err)/m0, ymax=(E1p1+E1p1err)/m0, color=as.factor(g),label=T), width=0.05)
+###gg<- geom_error(gg, x=df$L, y=df$E1, dy=df$E1err, color=as.factor(df$g), shaper=as.factor(df$g) )
+myplotly(gg,"","Lm","E(p=(1,0,0))/m",to_print=FALSE)
+```

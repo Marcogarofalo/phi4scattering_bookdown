@@ -1,0 +1,237 @@
+# GEVP g=0 {#GEVPg0}
+
+```{r  include=FALSE}
+ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, result='asis')
+ 
+ library(ggplot2)
+ library(plotly)
+ library(tidyverse)
+ library(htmlwidgets)
+ library(pander)
+ #library(latex2exp)
+ library(knitr)
+ library(dplyr) #data frame manipulation
+ require(scales) # to access break formatting functions
+ #library(shiny)
+ #library(shinyWidgets)
+ library(ggrepel)
+ library(Rose)
+ library(widgetframe)
+ require("processx")
+ library(webshot)
+ library(htmltools)
+ #library(sigma)
+ source('functions.R')
+```
+
+
+### P=(0,0,0) 
+
+```{r, echo=FALSE,results='asis'}
+df<-data.frame("L"=c(0),"T"=c(0),"E3"=c(0),"E3err"=c(0),"E1"=c(0),"E1err"=c(0),
+               "E3p1"=c(0),"E3p1err"=c(0),"E1p1"=c(0),"E1p1err"=c(0))
+gg<-ggplot()
+T<- 128
+L<- 24
+
+dir<-paste("../../momentum/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_phi0_phi03sub_phi1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_phi0_phi03sub_phi1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_phi0_phi03sub_phi1_meffl2",all_obs,mt,gg,"no")
+
+# gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
+
+
+
+
+### P=(1,0,0)
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 128
+L<- 24
+dir<-paste("../../momentum/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_p1",all_obs,mt,gg,"no")
+#gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+#gg1<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+gg1<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_phi0_phi03sub_phi1_p1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_phi0_phi03sub_phi1_p1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_phi0_phi03sub_phi1_p1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("phi03sub_p1",all_obs,mt,gg,"no")
+# gg<-add_plot("phi03_p1",all_obs,mt,gg,"no")
+# gg<-add_plot("E3_0_sub_exp",all_obs,mt,gg,"no")
+# gg<-add_plot("E2_0",all_obs,mt,gg,"no")
+# #gg<-add_plot("sE1_0_p1",all_obs,mt,gg,"no")
+# gg1<-add_plot("E2_0_p1",all_obs,mt,gg,"no")
+# gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+# gg<-add_plot("E1_1_p1",all_obs,mt,gg,"no")
+# gg<-add_plot("E3_0_p1_2exp",all_obs,mt,gg,"no")
+
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl3",all_obs,mt,gg,"no")
+
+######
+file_meff=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_meff_correlators",dir,T,L)
+#cat("\n####",file_meff,'\n\n')
+mt_meff<-read_df(file_meff)
+all_obs_meff<- get_all_corr(mt_meff)
+gg<-add_plot("E3_0_p1_meff",all_obs_meff,mt_meff,gg,"no",number=96)
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+
+```
+
+
+
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 256
+L<- 24
+dir<-paste("../../momentum/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0_p1",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1_px",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_p1_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("sE1_0_p1",all_obs,mt,gg,"no")
+gg1<-add_plot("E2_0",all_obs,mt,gg,"no")
+gg1<-add_plot("E2_0_p1",all_obs,mt,gg,"no")
+gg1<-add_plot("E1_0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_p1_meffl3",all_obs,mt,gg,"no")
+
+######
+file_meff=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_meff_correlators",dir,T,L)
+#cat("\n####",file_meff,'\n\n')
+mt_meff<-read_df(file_meff)
+all_obs_meff<- get_all_corr(mt_meff)
+gg<-add_plot("E3_0_p1_meff",all_obs_meff,mt_meff,gg,"no",number=96)
+
+file_raw=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_raw_correlators",dir,T,L)
+#cat("\n####",file_meff,'\n\n')
+mt_raw<-read_df(file_raw)
+all_obs_raw<- get_all_corr(mt_raw)
+corr_E3_0_p1<- get_block_n(mt_raw,96)
+#gg<-add_plot("E3_0_p1_log_raw",all_obs_raw,mt_raw,gg,"yes",number=96)
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+
+```
+
+```{r}
+gg<- ggplot()
+
+file_raw=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_raw_correlators",dir,T,L)
+#cat("\n####",file_meff,'\n\n')
+mt_raw<-read_df(file_raw)
+all_obs_raw<- get_all_corr(mt_raw)
+corr_E3w_0_p1<- get_block_n(mt_raw,96)
+#gg<-add_plot("E3_0_p1_log_raw",all_obs_raw,mt_raw,gg,"yes",number=96)
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+```
+
+
+
+### plotting the exponential
+
+$$
+|A_{0-\phi_1}|^2 \left( e^{-E_{\phi_1}t}+e^{-E_{\phi_1}(T-t)}\right) 
++|A_{0-\phi_0}|^2 \left( e^{-E_{\phi_0}t}+e^{-E_{\phi_0}(T-t)}\right)\\
++|A_{0-3\phi_0}|^2 \left( e^{-E_{3\phi_0}t}+e^{-E_{3\phi_0}(T-t)}\right)\\
++|A_{\phi_0-2\phi_0(p)}|^2 e^{-E_{\phi_0}T} \left( e^{-(E_{2\phi_0}(p)-E_{\phi_0})t}+e^{-(E_{2\phi_0}(p)-E_{\phi_0})(T-t)}\right)\\
++|A_{\phi_0(p)-2\phi_0}|^2 e^{-E_{\phi_0}(p)T} \left( e^{-(E_{2\phi_0}-E_{\phi_0}(p))t}+e^{-(E_{2\phi_0}-E_{\phi_0}(p))(T-t)}\right)\,.
+$$
+
+
+```{r, echo=TRUE}
+library(ggplot2)
+library(Rose)
+T<-256
+t<-c(1:100)*48/100
+E1_0= 0.12967
+E1_0_p1= 0.29023
+E1_1_p1=0.51572
+E2_0=0.26551
+E2_0_p1=0.4264
+
+e1<-log10( exp(-E1_1_p1*t)+exp(-E1_1_p1*(T-t)))
+e2<-log10( exp(-E1_0_p1*t)+exp(-E1_0_p1*(T-t)))
+e3<-log10( (exp(-(E2_0_p1-E1_0)*t)+exp(-(E2_0_p1-E1_0)*(T-t)) ) *exp(-E1_0*T))
+e4<-log10( (exp(-(E2_0-E1_0_p1)*t)+exp(-(E2_0-E1_0_p1)*(T-t)) ) *exp(-E1_0_p1*T))
+
+gg<-ggplot()
+gg<- gg+ geom_line(aes(x=t, y=e1, color="e1"))
+gg<- gg+ geom_line(aes(x=t, y=e2, color="e2"))
+gg<- gg+ geom_line(aes(x=t, y=e3, color="e3"))
+gg<- gg+ geom_line(aes(x=t, y=e4, color="e4"))
+
+gg<- gg+ geom_line(aes(x=(corr_E3_0_p1[,1]),
+                       y=log10(corr_E3_0_p1[,2]), color="corr_E3"))
+
+myplotly(gg, to_print = FALSE, xrange=c(0,48))
+```
