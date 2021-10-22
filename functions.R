@@ -8,7 +8,7 @@ my_print<-function(label,fit,all_obs,l){
   str2 <- paste(str2,"  $\\chi^2/dof=$",all_obs[l,4])
   cat(str2,'\n\n')
 }
-add_plot<-function(string,all_obs,mt,gg ,log,number=NULL){
+add_plot<-function(string,all_obs,mt,gg ,log,number=NULL, nudge=0.0){
   string=sprintf("\\b%s\\b",string)# need to put the delimiters on the word to grep  
   label<-paste0(gsub('\\\\b','',string),"(L",L,"T",T,")")
   if (is.null(number)){
@@ -23,7 +23,7 @@ add_plot<-function(string,all_obs,mt,gg ,log,number=NULL){
   d<- get_block_n(mt,n)
   fit<- get_fit_n(mt,n)
   fit_range<- get_plateaux_range(mt,n)
-  gg<- many_fit_ggplot(d,fit,fit_range,T/2,log,gg,  label  )
+  gg<- many_fit_ggplot(d,fit,fit_range,T/2,log,gg,  label ,nudge )
   my_print(label,fit,all_obs,l)
   
   return(gg)

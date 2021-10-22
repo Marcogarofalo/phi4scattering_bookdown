@@ -113,60 +113,6 @@ fig
 ```
 
 
-```{r, echo=FALSE,results='asis' ,dev='tikz'}
-
-gg<-ggplot()
-T<- 16
-L<- 4
- dir<-paste("/home/marco/programs/Z2-phi4/build/main/data/out")
- file=sprintf("%s/G2t_T%d_L%d_msq0-4.850000_msq1-4.850000_l02.500000_l12.500000_mu5.000000_g0.000000_rep0_output",dir,T,L)
- 
-cat("\n####",file,'\n\n')
-
-mt<-read_df(file)
-all_obs<- get_all_corr(mt)
-
-
-
-#gg<-add_plot("E1_0",all_obs,mt,gg,"no")
-#gg<-add_plot("sE1_0",all_obs,mt,gg,"no")
-
-gg<-add_plot("E1_0",all_obs,mt,gg,"no")
-gg<-add_plot("sE1_0",all_obs,mt,gg,"no")
-
-gg<-add_plot("E2_0",all_obs,mt,gg,"no")
-gg<-add_plot("sE2_0",all_obs,mt,gg,"no")
-
-gg<-add_plot("E3_0_vev",all_obs,mt,gg,"yes")
-gg<-add_plot("sE3_0_vev",all_obs,mt,gg,"yes")
-
-
-#gg<-add_plot("fun_l1_GEVP",all_obs,mt,gg,"no")
-#gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
-#gg<-add_plot("E3_0_p111",all_obs,mt,gg,"yes")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l0",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l1",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_l2",all_obs,mt,gg,"no")
-
-
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
-# gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
-# gg<-add_plot("fun_l1_GEVP",all_obs,mt,gg,"no")
-# gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
-
- #gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs1,mt1,gg,"no")
- #gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs1,mt1,gg,"no")
- #gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs1,mt1,gg,"no")
- #gg<-add_plot("E1_0",all_obs1,mt1,gg,"no")
- #gg<-add_plot("E1_1",all_obs1,mt1,gg,"no")
-
-fig<- myplotly(gg,"fit","t", "y", width=900, yrange = c(-3,5) )
-
-
-```
-
-
 
 ```{r, echo=FALSE,results='asis' ,dev='tikz'}
 library(ggplot2)

@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.tex
+*.log
+*.md
+*.html
+*.pdf
+*.aux
+*tikzDictionary

@@ -287,6 +287,46 @@ df[length(df[,1])+1,]<-list(L,T,
 
 ```
 
+```{r, echo=FALSE,results='asis'}
+
+gg<-ggplot()
+T<- 64
+L<- 34
+
+dir<-paste("../../g0.025/out")
+file=sprintf("%s/G2t_T%d_L%d_msq0-4.900000_msq1-4.650000_l02.500000_l12.500000_mu5.000000_g0.025000_rep0_output",dir,T,L)
+
+cat("\n####",file,'\n\n')
+
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl0",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl1",all_obs,mt,gg,"no")
+gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
+gg<-add_plot("E1_0",all_obs,mt,gg,"no")
+gg<-add_plot("E1_1",all_obs,mt,gg,"no")
+gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+#gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+
+
+fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )
+
+df[length(df[,1])+1,]<-list(L,T,
+                          get_energy("E3_0_vev",all_obs,mt)[1],
+                          get_energy("E3_0_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt)[2],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[1],
+                          get_energy("E3_0_p1_vev",all_obs,mt)[2],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[1],
+                          get_energy("GEVP_phi0_phi03_phi1_p1_meffl2",all_obs,mt)[2]
+                          )
+
+
+```
 
 ```{r, echo=FALSE,results='asis'}
 
@@ -350,10 +390,10 @@ gg<-add_plot("GEVP_phi0_phi03_phi1_meffl2",all_obs,mt,gg,"no")
 gg<-add_plot("E1_0",all_obs,mt,gg,"no")
 gg<-add_plot("E1_1",all_obs,mt,gg,"no")
 gg<-add_plot("E3_0_vev",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
-gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl0",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl1",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl2",all_obs,mt,gg,"no")
+# gg<-add_plot("GEVP_0_3_1_A1_meffl3",all_obs,mt,gg,"no")
 
 
 fig<- myplotly(gg,"fit","t", "y", to_print=TRUE,width = 900 )

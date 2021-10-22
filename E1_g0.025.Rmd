@@ -2,7 +2,7 @@
 
 in this section we report the result with $g=0.025$
 
-## E1(g=0.025) 
+## E1 (g=0.025) {#E1g0_025}
 
 
 
@@ -52,7 +52,7 @@ ggp   # Let knitr handle the rendering naturally
 ```{r, echo=FALSE,results='asis'}
 
 g<-0.025
-TLs<-list(c(32,28) )# , c(96,30))
+TLs<-list(c(64,28) )# , c(96,30))
 
 for (TL in TLs){
 gg<-ggplot()
@@ -107,7 +107,7 @@ fig<- myplotly(gg, "", " t","$m_{eff}$",xrange = c(0,14))
 ```{r, echo=FALSE,results='asis'}
 
 g<-0.25
-TLs<-list(c(32,28) )# , c(96,30))
+TLs<-list(c(64,28) )# , c(96,30))
 
 for (TL in TLs){
 gg<-ggplot()

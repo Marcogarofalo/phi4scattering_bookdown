@@ -127,7 +127,7 @@ fig<- myplotly(gg,"fit","t","$m_{eff}$" ,yrange=c(0,2) )
 ### Test ensemble
 
 
-```{r, echo=FALSE,results='asis' ,dev='tikz'}
+```{r, echo=FALSE, eval=FALSE,results='asis' ,dev='tikz'}
 library(Rose)
 gg<-ggplot()
 T<- 16

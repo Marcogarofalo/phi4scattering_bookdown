@@ -1,0 +1,4 @@
+# g=0.1 {#g0_1}
+
+In this section we present the results wit $g=0.1$ where $g$ is the coupling
+$g\phi_0^3\phi_1$
